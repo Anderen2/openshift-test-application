@@ -16,13 +16,16 @@
 		</nav>
 		<div class="ui segment">
 			<div class="ui feed">
-				{% include "event.html" %}
-				{% include "event.html" %}
+				{%for i in loop%}
+					{% include "event.html" %}
+				{% endfor %}
 			</div>
-			<div class="ui action input" style="width:100%">
-				<input placeholder="type message here" type="text">
-				<button class="ui orange button">Send</button>
-			</div>
+			<form method="POST">
+				<div class="ui action input bottom" style="width:100%;">
+					<input placeholder="type message here" type="text">
+					<button class="ui orange button">Send</button>
+				</div>
+			</form>
 		</div>
 	</body>
 </html>
