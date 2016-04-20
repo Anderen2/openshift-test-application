@@ -22,3 +22,5 @@ def index (request):
 	})
 	return HttpResponse(template.render(context))
 	
+def post (request):
+	print(request.POST)
