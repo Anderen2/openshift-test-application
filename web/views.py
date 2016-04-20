@@ -27,7 +27,7 @@ def index (request):
 	})
 
 	return HttpResponse(template.render(context))
-	
+
 def post (request):
 	print(request.POST)
 
@@ -42,3 +42,10 @@ def post (request):
 	)
 	message.save()
 	return HttpResponseRedirect("/")
+
+def login (request):
+	template = loader.get_template("login.html")
+	context = RequestContext(request, {
+
+	})
+	return HttpResponse(template.render(context))

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" type="text/css" href="/static/semantic.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script> 
+		<script type="text/javascript" src="/static/semantic.js"></script>
+		<script type="text/javascript" src="/static/components/form.js"></script>
+		<script type="text/javascript" src="/static/components/transition.js"></script>
+		<title>Log in!</title>
+	</head>
+	<body>
+
+		<style type="text/css">
+
+			body {
+				background-image: url('/static/blueprint_bg.jpg');
+			}
+			body > .grid {
+				height: 100%;
+			}
+			.column {
+				max-width: 480px;
+			}
+		</style>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$('.ui.form').form({
+					fields: {
+						username: {
+							identifier: 'username',
+							rules: [
+								{
+									type: 'empty',
+									prompt: 'Please enter your username.'
+								}
+							]
+						},
+						password: {
+							identifier: 'password',
+							rules: [
+								{
+									type: 'empty',
+									prompt: 'Please enter your password.'
+								}
+							]
+						}
+					}
+				});
+			});
+
+		</script>
+		<div class="ui middle aligned center aligned grid">
+			<div class="column">
+				<h2 class="ui orange image header">
+					<div class="content">Log in</div>
+				</h2>
+				<form class="ui large form">
+					<div class="ui stacked segment">
+						<div class="field">
+							<div class="ui left icon input">
+								<i class="user icon"></i>
+								<input type="text" name="username" id="username" placeholder="Username"></input>
+							</div>
+						</div>
+						<div class="field">
+							<div class="ui left icon input">
+								<i class="lock icon"></i>
+								<input type="password" name="password" id="password" placeholder="Password"></input>
+							</div>
+						</div>
+						<div class="ui fluid large orange submit button">Log in</div>
+					</div>
+					<div class="ui error message"></div>
+				</form>
+			</div>
+		</div>
+	</body>
+</html>
