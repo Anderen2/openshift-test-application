@@ -1,4 +1,5 @@
-from datetime import datetime
+import json
+from datetime import datetime, timedelta
 
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
@@ -23,15 +24,15 @@ def index (request):
 		})
 
 	context = RequestContext(request, {
-		"messages_": messages
+		# "messages_": messages
 	})
 
 	return HttpResponse(template.render(context))
 	
 def post (request):
-	print(request.POST)
+	print(request.GET)
 
-	content = request.POST.get("text_input", None)
+	content = request.GET.get("text_input", None)
 	if not content:
 		return HttpResponse("Go fuck a goat")
 
@@ -41,4 +42,33 @@ def post (request):
 		rating=""
 	)
 	message.save()
-	return HttpResponseRedirect("/")
+	return HttpResponse(content)
+
+def getLatestPost(request):
+	print(request.GET)
+
+	timestamp = request.GET.get("timestamp", None)
+	if not timestamp:
+		earlier = datetime.now() - timedelta(weeks=12)
+	else:
+		earlier = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S") + timedelta(seconds=1)
+
+	query = MessageModel.objects.filter(datetime__range=(earlier, datetime.now()))
+
+	template = loader.get_template("event.html")
+
+	for message in query:
+		print message.content
+		context = RequestContext(request, {
+			'avatar':'linux',
+			'username':'root',
+			'date':message.datetime.strftime("%Y-%m-%d %H:%M:%S"),
+			'content':message.content,
+			'rating':''
+		})
+		return HttpResponse(template.render(context))
+
+	return HttpResponse("")
+
+
+	# return HttpResponse(json.dumps(messages), content_type="application/json")

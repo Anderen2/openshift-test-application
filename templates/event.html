@@ -1,20 +1,21 @@
 <div class="event">
 	<div class="label">
 		<!-- <img src=""> -->
-		<i class="{{message.avatar}} icon"></i>
+		<i class="{{avatar}} icon"></i>
 	</div>
 	<div class="content">
 		<div class="summary">
-			<a class="user">{{message.username}}</a> chatted
-			<div class="date">{{message.date}}</div>
+			<a class="user">{{username}}</a> chatted
+			<div class="date">{{date}}</div>
 		</div>
 		<div class="extra text">
-			{{message.content}}
+			{{content}}
 		</div>
 		<div class="meta">
 			<a class="like">
-				<i class="heart icon"></i> {{message.rating}} rating
+				<i class="heart icon"></i> {{rating}} rating
 			</a>
 		</div>
 	</div>
 </div>
+<script type="text/javascript">last_timestamp="{{date}}";</script>
