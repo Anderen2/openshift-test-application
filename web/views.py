@@ -28,7 +28,7 @@ def index (request):
 	})
 
 	return HttpResponse(template.render(context))
-	
+
 def post (request):
 	print(request.GET)
 
@@ -70,5 +70,9 @@ def getLatestPost(request):
 
 	return HttpResponse("")
 
+def login (request):
+	template = loader.get_template("login.html")
+	context = RequestContext(request, {
 
-	# return HttpResponse(json.dumps(messages), content_type="application/json")
+	})
+	return HttpResponse(template.render(context))

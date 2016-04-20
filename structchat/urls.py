@@ -7,6 +7,5 @@ urlpatterns = patterns('',
 	url(r'^$', 'web.views.index'),
 	url(r'^post$', 'web.views.post'),
 	url(r'^api/getlatestpost$', 'web.views.getLatestPost'),
-
-	url(r'^admin/', include(admin.site.urls)),
+	url(r'^login/$', 'web.views.login'),
 )
