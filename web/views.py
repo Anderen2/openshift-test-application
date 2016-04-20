@@ -48,4 +48,10 @@ def login (request):
 	context = RequestContext(request, {
 
 	})
+	username = request.POST.get("username")
+	password = request.POST.get("password")
+	new_session = UserModel.objects.filter(username=username, password=password)
+	if new_session:
+		print new_session
+
 	return HttpResponse(template.render(context))
