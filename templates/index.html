@@ -1,4 +1,34 @@
 <!DOCTYPE html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+
+<script type="text/javascript">
+	var last_timestamp = "";
+	window.onload = function() {
+		setInterval(function()
+			{
+				if (last_timestamp!="") {
+					$.get("/api/getlatestpost?timestamp="+encodeURIComponent(last_timestamp), function(data){
+						$( "#message_feed" ).append( data );
+					});
+				}
+
+				else {
+					$.get("/api/getlatestpost", function(data){
+						$( "#message_feed" ).append( data );
+					});
+				}
+			},
+			1000);
+	};
+
+	function sendChatMsg() {
+		console.log(document.getElementById('text_input').value)
+		$.get("/post?text_input="+encodeURIComponent(document.getElementById('text_input').value), function(data){});
+		document.getElementById('text_input').value=""
+		return false
+	}
+</script>
+
 <html>
 	<head>
 		<meta charset="utf-8">
@@ -21,18 +51,19 @@
 		</style>
 		{% include "header.html" %}
 		<div class="ui segment">
-			<div class="ui feed">
-				{% for message in messages_ %}
+			<div class="ui feed" id="message_feed" name="message_feed">
+				<!-- {% for message in messages_ %}
 					{% include "event.html" %}
-				{% endfor %}
+				{% endfor %} -->
 			</div>
-			<form method="POST" id="message" action="/post/">
-				{% csrf_token %}
+			<form onsubmit="return sendChatMsg();">
+				<!-- {% csrf_token %} -->
 				<div class="ui action input" style="width:100%;">
-					<input placeholder="type message here" name="text_input" type="text">
-					<button type="submit" form="message" class="ui orange button">Send</button>
+					<input placeholder="type message here" name="text_input" id="text_input" type="text">
+					<button onclick="sendChatMsg();" class="ui orange button">Send</button>
 				</div>
 			</form>
 		</div>
 	</body>
 </html>
+
