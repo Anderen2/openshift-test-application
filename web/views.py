@@ -1,26 +1,44 @@
+from datetime import datetime
+
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext, loader
+
+from web.models import UserModel, RoomModel, MessageModel
 
 # Create your views here.
 def index (request):
 	template = loader.get_template("index.html")
+	
+	query = MessageModel.objects.all()
+	messages = []
+	for message in query:
+		print message.content
+		messages.append({
+			'avatar':'linux',
+			'username':'root',
+			'date':message.datetime.strftime("%Y-%m-%d %H:%M:%S"),
+			'content':message.content,
+			'rating':''
+		})
+
 	context = RequestContext(request, {
-		"author":"Sebastian",
-		"date":"1 hour ago",
-		"likes":23,
-		"icon":"linux",
-		"loop":range(3),
-		"content":(
-			"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod" 
-			+ "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam," 
-			+ "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo" 
-			+ "consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse" 
-			+ "cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non" 
-			+ "proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-		)
+		"messages_": messages
 	})
+
 	return HttpResponse(template.render(context))
 	
 def post (request):
 	print(request.POST)
+
+	content = request.POST.get("text_input", None)
+	if not content:
+		return HttpResponse("Go fuck a goat")
+
+	message = MessageModel(
+		content=content,
+		datetime=datetime.now(),
+		rating=""
+	)
+	message.save()
+	return HttpResponseRedirect("/")

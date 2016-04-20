@@ -10,7 +10,7 @@
 		{% include "header.html" %}
 		<div class="ui segment">
 			<div class="ui feed">
-				{%for i in loop%}
+				{% for message in messages_ %}
 					{% include "event.html" %}
 				{% endfor %}
 			</div>

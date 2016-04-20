@@ -16,10 +16,9 @@ class MessageModel (models.Model):
         blank=True,
         null=True
     )
-    timestamp = models.DateTimeField()
+    datetime = models.DateTimeField()
     content = models.TextField()
     rating = models.TextField() # If I gave you a nickle, would you tickle my pickle?
-
 
 class UserModel (models.Model):
     username = models.CharField(max_length=32)
