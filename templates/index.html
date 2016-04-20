@@ -14,10 +14,11 @@
 					{% include "event.html" %}
 				{% endfor %}
 			</div>
-			<form method="POST">
-				<div class="ui action input bottom" style="width:100%;">
-					<input placeholder="type message here" type="text">
-					<button class="ui orange button">Send</button>
+			<form method="POST" id="message" action="/post/">
+				{% csrf_token %}
+				<div class="ui action input" style="width:100%;">
+					<input placeholder="type message here" name="text_input" type="text">
+					<button type="submit" form="message" class="ui orange button">Send</button>
 				</div>
 			</form>
 		</div>
