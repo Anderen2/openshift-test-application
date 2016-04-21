@@ -8,22 +8,8 @@ from web.models import UserModel, RoomModel, MessageModel
 
 def index(request):
 	template = loader.get_template("index.html")
-	
-	query = MessageModel.objects.all()
-	messages = []
-	for message in query:
-		print message.content
-		messages.append({
-			'avatar':'linux',
-			'username':'root',
-			'date':message.datetime.strftime("%Y-%m-%d %H:%M:%S"),
-			'content':message.content,
-			'rating':''
-		})
 
-	context = RequestContext(request, {
-		# "messages_": messages
-	})
+	context = RequestContext(request, {})
 
 	return HttpResponse(template.render(context))
 
@@ -71,10 +57,11 @@ def getLatestPost(request):
 def login(request):
 	template = loader.get_template("login.html")
 	context = RequestContext(request, {})
+
 	username = request.POST.get("username")
 	password = request.POST.get("password")
 	new_session = UserModel.objects.filter(username=username)
-	print new_session
+	# print new_session
 
 	return HttpResponse(template.render(context))
 
@@ -86,5 +73,15 @@ def signUp(request):
 	username = request.POST.get("username")
 	password = request.POST.get("password")
 	password_repeat = request.POST.get("password_repeat")
+
+	if len(UserModel.objects.filter(email=email)):
+		# Notify user if email is taken.
+		pass
+	if password != password_repeat:
+		# Notify user passwords not matching
+		pass
+	if len(UserModel.objects.filter(username=username)):
+		# Notify user that username is taken
+		pass
 
 	return HttpResponse(template.render(context))

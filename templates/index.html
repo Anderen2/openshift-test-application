@@ -6,7 +6,6 @@
 	window.onload = function() {
 		setInterval(function()
 			{
-				var scrollArea = $("scrollArea")
 				if (last_timestamp!="") {
 					$.get("/api/getlatestpost?timestamp="+encodeURIComponent(last_timestamp), function(data){
 						$( "#message_feed" ).append( data );
@@ -19,7 +18,9 @@
 						$( "#message_feed" ).append( data );
 					});
 				}
-					scrollArea.scrollTop = scrollArea.scrollHeight;
+					$("#scrollArea").animate({
+						scrollTop:$("#scrollArea").prop("scrollHeight")
+					}, 300);
 			},
 			1000);
 	};
@@ -64,7 +65,7 @@
 		</style>
 		{% include "header.html" %}
 		<br>
-		<div class="ui segment scrollArea" style="margin: 0 auto;">
+		<div class="ui segment scrollArea" id="scrollArea" style="margin: 0 auto;">
 			<div class="ui feed" id="message_feed" name="message_feed">
 				<!-- {% for message in messages_ %}
 					{% include "event.html" %}
