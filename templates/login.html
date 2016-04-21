@@ -56,6 +56,7 @@
 					<div class="content">Log in</div>
 				</h2>
 				<form class="ui large form" method="POST" action="/login">
+					{% csrf_token %}
 					<div class="ui stacked segment">
 						<div class="field">
 							<div class="ui left icon input">
@@ -73,6 +74,9 @@
 					</div>
 					<div class="ui error message"></div>
 				</form>
+				<div class="ui message">
+					Don't have an account? <a href="/signup">Sign Up!</a>
+				</div>
 			</div>
 		</div>
 	</body>

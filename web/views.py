@@ -1,4 +1,3 @@
-import json
 from datetime import datetime, timedelta
 
 from django.shortcuts import render
@@ -7,8 +6,7 @@ from django.template import RequestContext, loader
 
 from web.models import UserModel, RoomModel, MessageModel
 
-# Create your views here.
-def index (request):
+def index(request):
 	template = loader.get_template("index.html")
 	
 	query = MessageModel.objects.all()
@@ -29,10 +27,10 @@ def index (request):
 
 	return HttpResponse(template.render(context))
 
-def post (request):
-	print(request.GET)
+def post(request):
+	# print(request.GET)
 
-	content = request.GET.get("text_input", None)
+	content = request.GET.get("message_input", None)
 	if not content:
 		return HttpResponse("Go fuck a goat")
 
@@ -45,7 +43,7 @@ def post (request):
 	return HttpResponse(content)
 
 def getLatestPost(request):
-	print(request.GET)
+	# print(request.GET)
 
 	timestamp = request.GET.get("timestamp", None)
 	if not timestamp:
@@ -58,7 +56,7 @@ def getLatestPost(request):
 	template = loader.get_template("event.html")
 
 	for message in query:
-		print message.content
+		# print message.content
 		context = RequestContext(request, {
 			'avatar':'linux',
 			'username':'root',
@@ -70,15 +68,23 @@ def getLatestPost(request):
 
 	return HttpResponse("")
 
-def login (request):
+def login(request):
 	template = loader.get_template("login.html")
-	context = RequestContext(request, {
-
-	})
+	context = RequestContext(request, {})
 	username = request.POST.get("username")
 	password = request.POST.get("password")
-	new_session = UserModel.objects.filter(username=username, password=password)
-	if new_session:
-		print new_session
+	new_session = UserModel.objects.filter(username=username)
+	print new_session
+
+	return HttpResponse(template.render(context))
+
+def signUp(request):
+	template = loader.get_template("signUp.html")
+	context = RequestContext(request, {})
+
+	email = request.POST.get("email")
+	username = request.POST.get("username")
+	password = request.POST.get("password")
+	password_repeat = request.POST.get("password_repeat")
 
 	return HttpResponse(template.render(context))

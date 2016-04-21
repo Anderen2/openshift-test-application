@@ -6,10 +6,12 @@
 	window.onload = function() {
 		setInterval(function()
 			{
+				var scrollArea = $("scrollArea")
 				if (last_timestamp!="") {
 					$.get("/api/getlatestpost?timestamp="+encodeURIComponent(last_timestamp), function(data){
 						$( "#message_feed" ).append( data );
 					});
+
 				}
 
 				else {
@@ -17,14 +19,15 @@
 						$( "#message_feed" ).append( data );
 					});
 				}
+					scrollArea.scrollTop = scrollArea.scrollHeight;
 			},
 			1000);
 	};
 
-	function sendChatMsg() {
-		console.log(document.getElementById('text_input').value)
-		$.get("/post?text_input="+encodeURIComponent(document.getElementById('text_input').value), function(data){});
-		document.getElementById('text_input').value=""
+	function sendChatMessage() {
+		console.log(document.getElementById('message_input').value)
+		$.get("/post?message_input="+encodeURIComponent(document.getElementById('message_input').value), function(data){});
+		document.getElementById('message_input').value=""
 		return false
 	}
 </script>
@@ -43,27 +46,40 @@
 				background-image: url('/static/blueprint_bg.jpg');
 			}
 
+			.menu {
+				max-width: 95%;
+			}
+
 			.segment {
-				/* max-width: 95%; */
+				max-width: 95%;
 				opacity: 0.9;
+				overflow: auto;
+			}
+
+			.scrollArea {
+				height: 80%;
+				max-height: 80%;
 			}
 			
 		</style>
 		{% include "header.html" %}
-		<div class="ui segment">
+		<br>
+		<div class="ui segment scrollArea" style="margin: 0 auto;">
 			<div class="ui feed" id="message_feed" name="message_feed">
 				<!-- {% for message in messages_ %}
 					{% include "event.html" %}
 				{% endfor %} -->
 			</div>
-			<form onsubmit="return sendChatMsg();">
+		</div>
+		<br>
+		<div class="ui segment" style="margin: 0 auto;">
+			<form onsubmit="return sendChatMessage();">
 				<!-- {% csrf_token %} -->
 				<div class="ui action input" style="width:100%;">
-					<input placeholder="type message here" name="text_input" id="text_input" type="text">
-					<button onclick="sendChatMsg();" class="ui orange button">Send</button>
+					<input placeholder="type message here" name="message_input" id="message_input" type="text">
+					<button onclick="sendChatMessage();" class="ui orange button">Send</button>
 				</div>
 			</form>
 		</div>
 	</body>
 </html>
-
