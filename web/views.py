@@ -5,6 +5,7 @@ from passlib.hash import sha256_crypt
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext, loader
+from django.shortcuts import render
 
 from web.models import UserModel, RoomModel, MessageModel
 
@@ -12,6 +13,8 @@ def index(request):
 	template = loader.get_template("index.html")
 
 	context = RequestContext(request, {})
+
+	print "Cookie", request.COOKIES
 
 	return HttpResponse(template.render(context))
 
@@ -57,26 +60,47 @@ def getLatestPost(request):
 	return HttpResponse("")
 
 def login(request):
-	template = loader.get_template("login.html")
-	context = RequestContext(request, {})
+	WRONG_PASSWORD, WRONG_USERNAME, LOGIN_CORRECT = range(1, 4)
+
+	loginStatus = 0
 
 	username = request.POST.get("username", "")
 	password = request.POST.get("password", "")
-	
-	query = UserModel.objects.filter(username=username)
 
-	if len(query) == 1:
-		new_session = query[0]
+	if "username" in request.session:
+		print "------------------------------"
+		return HttpResponseRedirect("/")
 
-	if sha256_crypt.verify(password, new_session.password):
-		print True
-		return index(request)
+	try:
+		user = UserModel.objects.get(username=username)
+		if sha256_crypt.verify(password, user.password):
+			request.session['username'] = user.username
+			loginStatus = LOGIN_CORRECT
+			return HttpResponseRedirect("/")
+		else:
+			loginStatus = WRONG_PASSWORD if password else 0
+	except UserModel.DoesNotExist:
+		loginStatus = WRONG_USERNAME if username else 0
 
+	template = loader.get_template("login.html")
+	context = RequestContext(request, {
+		'loginStatus':loginStatus
+	})
 	return HttpResponse(template.render(context))
 
+def logout(request):
+	try:
+		del request.session['username']
+	except KeyError:
+		pass
+	return HttpResponseRedirect("/login")
+
+
 def signUp(request):
+	EMAIL_ERROR, PASSWORD_ERROR, USERNAME_ERROR = range(1, 4)
+	signupStatus = 0
+
 	template = loader.get_template("signUp.html")
-	context = RequestContext(request, {})
 
 	email = request.POST.get("email", "")
 	username = request.POST.get("username", "")
@@ -84,29 +108,35 @@ def signUp(request):
 	password_repeat = request.POST.get("password_repeat", "")
 
 	if UserModel.objects.filter(email=email).exists():
-		# Notify user if email is taken.
-		print "email taken"
+		print "Email taken"
+		signupStatus = EMAIL_ERROR if email else 0
+		# return HttpResponse(template.render(context))
 
-		return HttpResponse(template.render(context))
 	if password != password_repeat:
-		# Notify user passwords not matching
-		print "password not matching"
+		print "Passwrod missmatch"
+		signupStatus = PASSWORD_ERROR
+		# return HttpResponse(template.render(context))
 
-		return HttpResponse(template.render(context))
 	if UserModel.objects.filter(username=username).exists():
-		# Notify user that username is taken
-		print "username taken"
-		return HttpResponse(template.render(context))
+		print "Username taken"
+		signupStatus = USERNAME_ERROR if username else 0
+		# return HttpResponse(template.render(context))
 
-	user = UserModel(
-		username=username,
-		password=sha256_crypt.encrypt(password), 
-		email=email
-	)
-	print user.password
-	# for u in UserModel.objects.all():
-		# u.delete()
-	user.save()
+	context = RequestContext(request, {
+		'signupStatus':signupStatus
+	})
+
+	print signupStatus
+
+	if email and username and password and password_repeat and signupStatus == 0:
+		user = UserModel(
+			username=username,
+			password=sha256_crypt.encrypt(password), 
+			email=email
+		)
+		user.save()
+		return HttpResponseRedirect("/login")
+	
 	return HttpResponse(template.render(context))
 
 # Test function to see what's inside a db-table
@@ -127,5 +157,4 @@ def display(request):
 		</table>"""
 	)
 	context = RequestContext(request, {'obj':UserModel.objects.all()})
-	# return render_to_response('template.tmpl', {'obj': UserModel.objects.all()})
 	return HttpResponse(template.render(context))

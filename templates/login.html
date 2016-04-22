@@ -50,6 +50,15 @@
 			});
 
 		</script>
+		{% if loginStatus == 1 %}
+			<i>Wrong password</i>
+		{% endif %}
+		{% if loginStatus == 2 %}
+			<i>Wrong username</i>
+		{% endif %}
+		{% if loginStatus == 3 %}
+			<i>Correct</i>
+		{% endif %}
 		<div class="ui middle aligned center aligned grid">
 			<div class="column">
 				<h2 class="ui orange image header">
