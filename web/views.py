@@ -13,6 +13,8 @@ def index(request):
 	template = loader.get_template("index.html")
 
 	context = RequestContext(request, {})
+	if "username" not in request.session.keys():
+		return HttpResponseRedirect("/login")
 
 	print "Cookie", request.COOKIES
 
@@ -26,6 +28,7 @@ def post(request):
 		return HttpResponse("Go fuck a goat")
 
 	message = MessageModel(
+		username=request.session['username'],
 		content=content,
 		datetime=datetime.now(),
 		rating=""
@@ -50,7 +53,7 @@ def getLatestPost(request):
 		# print message.content
 		context = RequestContext(request, {
 			'avatar':'linux',
-			'username':'root',
+			'username':message.username,
 			'date':message.datetime.strftime("%Y-%m-%d %H:%M:%S"),
 			'content':message.content,
 			'rating':''
@@ -140,7 +143,7 @@ def signUp(request):
 	return HttpResponse(template.render(context))
 
 # Test function to see what's inside a db-table
-def display(request):
+def displayUsers(request):
 	template = loader.get_template_from_string("""<table>
 		<tr>
 		  <th>username</th>
@@ -157,4 +160,27 @@ def display(request):
 		</table>"""
 	)
 	context = RequestContext(request, {'obj':UserModel.objects.all()})
+	return HttpResponse(template.render(context))
+
+def displayMessages(request):
+	template = loader.get_template_from_string("""<table>
+		<tr>
+		  <th>username</th>
+		  <th>room_id</th>
+		  <th>datetime</th>
+		  <th>content</th>
+		  <th>rating</th>
+		</tr>
+		{% for b in obj %}
+		<tr>
+		  <td>{{ b.username }}</td>
+		  <td>{{ b.room_id }}</td>
+		  <td>{{ b.datetime }}</td>
+		  <td>{{ b.content }}</td>
+		  <td>{{ b.rating }}</td>
+		</tr>
+		{% endfor %}
+		</table>"""
+	)
+	context = RequestContext(request, {'obj':MessageModel.objects.all()})
 	return HttpResponse(template.render(context))
