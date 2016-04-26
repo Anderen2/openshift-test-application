@@ -1,44 +1,42 @@
 <!DOCTYPE html>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-
-<script type="text/javascript">
-	var last_timestamp = "";
-	window.onload = function() {
-		setInterval(function()
-			{
-				if (last_timestamp!="") {
-					$.get("/api/getlatestpost?timestamp="+encodeURIComponent(last_timestamp), function(data){
-						$( "#message_feed" ).append( data );
-					});
-
-				}
-
-				else {
-					$.get("/api/getlatestpost", function(data){
-						$( "#message_feed" ).append( data );
-					});
-				}
-					$("#scrollArea").animate({
-						scrollTop:$("#scrollArea").prop("scrollHeight")
-					}, 300);
-			},
-			1000);
-	};
-
-	function sendChatMessage() {
-		console.log(document.getElementById('message_input').value)
-		$.get("/post?message_input="+encodeURIComponent(document.getElementById('message_input').value), function(data){});
-		document.getElementById('message_input').value=""
-		return false
-	}
-</script>
-
 <html>
 	<head>
 		<meta charset="utf-8">
 		<title>StructChat</title>
 		<link rel="stylesheet" type="text/css" href="/static/semantic.css">
 		<script type="text/javascript" src="/static/semantic.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+		<script type="text/javascript">
+			var last_timestamp = "";
+			window.onload = function() {
+				setInterval(function()
+					{
+						if (last_timestamp!="") {
+							$.get("/api/getlatestpost?timestamp="+encodeURIComponent(last_timestamp), function(data){
+								$( "#message_feed" ).append( data );
+							});
+
+						}
+
+						else {
+							$.get("/api/getlatestpost", function(data){
+								$( "#message_feed" ).append( data );
+							});
+						}
+							$("#scrollArea").animate({
+								scrollTop:$("#scrollArea").prop("scrollHeight")
+							}, 300);
+					},
+					1000);
+			};
+
+			function sendChatMessage() {
+				console.log(document.getElementById('message_input').value)
+				$.get("/post?message_input="+encodeURIComponent(document.getElementById('message_input').value), function(data){});
+				document.getElementById('message_input').value=""
+				return false
+			}
+		</script>
 	</head>
 	<body>
 		<style type="text/css">

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" type="text/css" href="/static/semantic.css">
+		<script type="text/javascript" src="/static/semantic.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+		<title>Database</title>
+		<style type="text/css">
+			h1 {
+				padding-left: 60px;
+				padding-top: 10px;
+			}
+			.segment {
+				width: 95%;
+			}
+		</style>
+	</head>
+	<body>
+		<script type="text/javascript">
+			var editCell = function() {
+				
+			}			
+		</script>
+		<h1>Database</h1>
+		<div class="ui segment" style="margin: 0 auto">
+			{% for m in models %}
+				<h2>{{ m.name }}</h2>
+				<table class="ui celled table">
+					<thead>
+						<tr>
+							{% for c in m.columns %}
+								<th>{{ c }}</th>
+							{% endfor %}
+							<th>Edit</th>
+						</tr>
+					</thead>
+					<tbody>
+					{% for r in m.rows %}
+						<tr>
+							{% for v in r %}
+								<td id="cell" contenteditable="false">{{ v }}</td>
+							{% endfor %}
+							<td><a href="javascript:void(0)" onclick="editCell();">Edit</a></td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			{% endfor %}
+		</div>
+	</body>
+</html>

@@ -19,10 +19,12 @@ class MessageModel(models.Model):
     )
     datetime = models.DateTimeField()
     content = models.TextField()
-    rating = models.TextField() # If I gave you a nickle, would you tickle my pickle?
+    rating = models.TextField()
+    device_type = models.CharField(max_length=32)
 
 class UserModel(models.Model):
     username = models.CharField(max_length=32)
+    avatar = models.CharField(max_length=32)
     password = models.CharField(max_length=256)
     email = models.CharField(max_length=256)
 

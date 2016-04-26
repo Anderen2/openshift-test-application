@@ -5,9 +5,25 @@ from passlib.hash import sha256_crypt
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext, loader
-from django.shortcuts import render
+from django.db import connection
 
 from web.models import UserModel, RoomModel, MessageModel
+
+def getDeviceType(request):
+	meta = request.META['HTTP_USER_AGENT'].lower()
+	linux = 'linux'
+	windows = 'windows'
+	android = 'android'
+	apple = 'apple'
+	if linux in meta:
+		return linux
+	elif windows in meta:
+		return windows
+	elif android in meta:
+		return android
+	elif apple in meta:
+		return apple
+	return 'user'
 
 def index(request):
 	template = loader.get_template("index.html")
@@ -16,18 +32,18 @@ def index(request):
 	if "username" not in request.session.keys():
 		return HttpResponseRedirect("/login")
 
-	print "Cookie", request.COOKIES
+	print request.META['HTTP_USER_AGENT']
+	print getDeviceType(request)
 
 	return HttpResponse(template.render(context))
 
 def post(request):
-	# print(request.GET)
-
 	content = request.GET.get("message_input", None)
 	if not content:
 		return HttpResponse("Go fuck a goat")
 
 	message = MessageModel(
+		device_type=getDeviceType(request),
 		username=request.session['username'],
 		content=content,
 		datetime=datetime.now(),
@@ -37,8 +53,6 @@ def post(request):
 	return HttpResponse(content)
 
 def getLatestPost(request):
-	# print(request.GET)
-
 	timestamp = request.GET.get("timestamp", None)
 	if not timestamp:
 		earlier = datetime.now() - timedelta(weeks=12)
@@ -50,9 +64,8 @@ def getLatestPost(request):
 	template = loader.get_template("event.html")
 
 	for message in query:
-		# print message.content
 		context = RequestContext(request, {
-			'avatar':'linux',
+			'avatar':message.device_type,
 			'username':message.username,
 			'date':message.datetime.strftime("%Y-%m-%d %H:%M:%S"),
 			'content':message.content,
@@ -65,7 +78,7 @@ def getLatestPost(request):
 def login(request):
 	WRONG_PASSWORD, WRONG_USERNAME, LOGIN_CORRECT = range(1, 4)
 
-	loginStatus = 0
+	login_status = 0
 
 	username = request.POST.get("username", "")
 	password = request.POST.get("password", "")
@@ -78,16 +91,16 @@ def login(request):
 		user = UserModel.objects.get(username=username)
 		if sha256_crypt.verify(password, user.password):
 			request.session['username'] = user.username
-			loginStatus = LOGIN_CORRECT
+			login_status = LOGIN_CORRECT
 			return HttpResponseRedirect("/")
 		else:
-			loginStatus = WRONG_PASSWORD if password else 0
+			login_status = WRONG_PASSWORD if password else 0
 	except UserModel.DoesNotExist:
-		loginStatus = WRONG_USERNAME if username else 0
+		login_status = WRONG_USERNAME if username else 0
 
 	template = loader.get_template("login.html")
 	context = RequestContext(request, {
-		'loginStatus':loginStatus
+		'login_status':login_status
 	})
 	return HttpResponse(template.render(context))
 
@@ -101,7 +114,7 @@ def logout(request):
 
 def signUp(request):
 	EMAIL_ERROR, PASSWORD_ERROR, USERNAME_ERROR = range(1, 4)
-	signupStatus = 0
+	signup_status = 0
 
 	template = loader.get_template("signUp.html")
 
@@ -112,26 +125,23 @@ def signUp(request):
 
 	if UserModel.objects.filter(email=email).exists():
 		print "Email taken"
-		signupStatus = EMAIL_ERROR if email else 0
-		# return HttpResponse(template.render(context))
+		signup_status = EMAIL_ERROR if email else 0
 
 	if password != password_repeat:
 		print "Passwrod missmatch"
-		signupStatus = PASSWORD_ERROR
-		# return HttpResponse(template.render(context))
+		signup_status = PASSWORD_ERROR
 
 	if UserModel.objects.filter(username=username).exists():
 		print "Username taken"
-		signupStatus = USERNAME_ERROR if username else 0
-		# return HttpResponse(template.render(context))
+		signup_status = USERNAME_ERROR if username else 0
 
 	context = RequestContext(request, {
-		'signupStatus':signupStatus
+		'signup_status':signup_status
 	})
 
-	print signupStatus
+	print signup_status
 
-	if email and username and password and password_repeat and signupStatus == 0:
+	if email and username and password and password_repeat and signup_status == 0:
 		user = UserModel(
 			username=username,
 			password=sha256_crypt.encrypt(password), 
@@ -142,45 +152,19 @@ def signUp(request):
 	
 	return HttpResponse(template.render(context))
 
-# Test function to see what's inside a db-table
-def displayUsers(request):
-	template = loader.get_template_from_string("""<table>
-		<tr>
-		  <th>username</th>
-		  <th>email</th>
-		  <th>password</th>
-		</tr>
-		{% for b in obj %}
-		<tr>
-		  <td>{{ b.username }}</td>
-		  <td>{{ b.email }}</td>
-		  <td>{{ b.password }}</td>
-		</tr>
-		{% endfor %}
-		</table>"""
-	)
-	context = RequestContext(request, {'obj':UserModel.objects.all()})
-	return HttpResponse(template.render(context))
+# Test view to see what's inside a db-table
+def displayDatabase(request):
+	template = loader.get_template('database.html')
 
-def displayMessages(request):
-	template = loader.get_template_from_string("""<table>
-		<tr>
-		  <th>username</th>
-		  <th>room_id</th>
-		  <th>datetime</th>
-		  <th>content</th>
-		  <th>rating</th>
-		</tr>
-		{% for b in obj %}
-		<tr>
-		  <td>{{ b.username }}</td>
-		  <td>{{ b.room_id }}</td>
-		  <td>{{ b.datetime }}</td>
-		  <td>{{ b.content }}</td>
-		  <td>{{ b.rating }}</td>
-		</tr>
-		{% endfor %}
-		</table>"""
-	)
-	context = RequestContext(request, {'obj':MessageModel.objects.all()})
+	models = []
+	for model in [UserModel, MessageModel, RoomModel]:
+		models.append({
+			'name':model._meta.db_table,
+			'columns':sorted(model._meta.get_all_field_names()),
+			'rows':[[m.__dict__[c] for c in sorted(m.__dict__.keys()) if not c[0]=="_"] for m in model.objects.all()]
+		})
+
+	context = RequestContext(request, {
+		'models':models
+	})
 	return HttpResponse(template.render(context))
