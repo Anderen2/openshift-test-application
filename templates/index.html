@@ -26,7 +26,7 @@
 			    });
 			  }
 
-			var notification = new Notification("Hi there!");
+			// var notification = new Notification("Hi there!");
 
 			// Set the name of the hidden property and the change event for visibility
 			var hidden, visibilityChange; 
@@ -56,6 +56,12 @@
 
 			// document.addEventListener(visibilityChange, handleVisibilityChange, false);
 
+			function scroll_area() {
+				$("#scroll_area").animate({
+					scrollTop:$("#scroll_area").prop("scrollHeight")
+				}, 300);
+			}
+
 			window.onload = function() {
 				$.get("/api/getlatestpost?timestamp="+encodeURIComponent(last_timestamp), function(data){$( "#message_feed" ).append( data );});
 				while (loading_messages) {
@@ -71,9 +77,7 @@
 					});
 				}
 
-				$("#scrollArea").animate({
-								scrollTop:$("#scrollArea").prop("scrollHeight")
-							}, 300);
+				scroll_area();
 
 				setInterval(function()
 					{
@@ -84,6 +88,7 @@
 									if (document[hidden]) {
 										new Notification(data);
 									};
+									scroll_area();
 								};
 							});
 
@@ -94,9 +99,6 @@
 								$( "#message_feed" ).append( data );
 							});
 						}
-						$("#scroll_area").animate({
-							scrollTop:$("#scroll_area").prop("scrollHeight")
-						}, 300);
 					},
 					1000);
 			};
