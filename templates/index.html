@@ -102,9 +102,9 @@
 			};
 
 			function sendChatMessage() {
-				console.log($('#message_input').value)
-				$.get("/post?message_input="+encodeURIComponent($('#message_input').value), function(data){});
-				document.getElementById('message_input').value=""
+				console.log($('#message_input')[0].value)
+				$.get("/post?message_input="+encodeURIComponent($('#message_input')[0].value), function(data){});
+				$('#message_input')[0].value=""
 				return false
 			}
 		</script>
