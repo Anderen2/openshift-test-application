@@ -23,16 +23,16 @@
 								$( "#message_feed" ).append( data );
 							});
 						}
-							$("#scrollArea").animate({
-								scrollTop:$("#scrollArea").prop("scrollHeight")
-							}, 300);
+						$("#scroll_area").animate({
+							scrollTop:$("#scroll_area").prop("scrollHeight")
+						}, 300);
 					},
 					1000);
 			};
 
 			function sendChatMessage() {
-				console.log(document.getElementById('message_input').value)
-				$.get("/post?message_input="+encodeURIComponent(document.getElementById('message_input').value), function(data){});
+				console.log($('#message_input').value)
+				$.get("/post?message_input="+encodeURIComponent($('#message_input').value), function(data){});
 				document.getElementById('message_input').value=""
 				return false
 			}
