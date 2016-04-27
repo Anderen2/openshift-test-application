@@ -9,31 +9,12 @@ from django.db import connection
 
 from web.models import UserModel, RoomModel, MessageModel
 
-def getDeviceType(request):
-	meta = request.META['HTTP_USER_AGENT'].lower()
-	linux = 'linux'
-	windows = 'windows'
-	android = 'android'
-	apple = 'apple'
-	if linux in meta:
-		return linux
-	elif windows in meta:
-		return windows
-	elif android in meta:
-		return android
-	elif apple in meta:
-		return apple
-	return 'user'
-
 def index(request):
 	template = loader.get_template("index.html")
 
 	context = RequestContext(request, {})
 	if "username" not in request.session.keys():
 		return HttpResponseRedirect("/login")
-
-	print request.META['HTTP_USER_AGENT']
-	print getDeviceType(request)
 
 	return HttpResponse(template.render(context))
 
@@ -51,6 +32,23 @@ def post(request):
 	)
 	message.save()
 	return HttpResponse(content)
+
+# Helper function for getting deivce type icon
+def getDeviceType(request):
+	meta = request.META['HTTP_USER_AGENT'].lower()
+	linux = 'linux'
+	windows = 'windows'
+	android = 'android'
+	apple = 'apple'
+	if android in meta:
+		return android
+	elif linux in meta:
+		return linux
+	elif windows in meta:
+		return windows
+	elif apple in meta:
+		return apple
+	return 'user'
 
 def getLatestPost(request):
 	timestamp = request.GET.get("timestamp", None)
@@ -128,7 +126,7 @@ def signUp(request):
 		signup_status = EMAIL_ERROR if email else 0
 
 	if password != password_repeat:
-		print "Passwrod missmatch"
+		print "Password missmatch"
 		signup_status = PASSWORD_ERROR
 
 	if UserModel.objects.filter(username=username).exists():
@@ -138,8 +136,6 @@ def signUp(request):
 	context = RequestContext(request, {
 		'signup_status':signup_status
 	})
-
-	print signup_status
 
 	if email and username and password and password_repeat and signup_status == 0:
 		user = UserModel(

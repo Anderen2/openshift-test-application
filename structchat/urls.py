@@ -10,5 +10,5 @@ urlpatterns = patterns('',
 	url(r'^login$', 'web.views.login'),
 	url(r'^logout$', 'web.views.logout'),
 	url(r'^signup$', 'web.views.signUp'),
-	url(r'^displayDatabase$', 'web.views.displayDatabase'),
+	url(r'^displaydatabase$', 'web.views.displayDatabase'),
 )

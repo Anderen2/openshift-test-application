@@ -55,7 +55,7 @@
 				overflow: auto;
 			}
 
-			.scrollArea {
+			.scroll_area {
 				height: 80%;
 				max-height: 80%;
 			}
@@ -63,12 +63,8 @@
 		</style>
 		{% include "header.html" %}
 		<br>
-		<div class="ui segment scrollArea" id="scrollArea" style="margin: 0 auto;">
-			<div class="ui feed" id="message_feed" name="message_feed">
-				<!-- {% for message in messages_ %}
-					{% include "event.html" %}
-				{% endfor %} -->
-			</div>
+		<div class="ui segment scroll_area" id="scroll_area" style="margin: 0 auto;">
+			<div class="ui feed" id="message_feed" name="message_feed"></div>
 		</div>
 		<br>
 		<div class="ui segment" style="margin: 0 auto;">

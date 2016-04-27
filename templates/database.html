@@ -18,13 +18,14 @@
 	</head>
 	<body>
 		<script type="text/javascript">
-			var editCell = function() {
-				
+			var editCell = function(cell) {
+				cell.parentNode.parentNode.remove()
 			}			
 		</script>
 		<h1>Database</h1>
 		<div class="ui segment" style="margin: 0 auto">
 			{% for m in models %}
+			<div class="ui segment" style="margin: 0 auto; margin-bottom: 10px">
 				<h2>{{ m.name }}</h2>
 				<table class="ui celled table">
 					<thead>
@@ -41,11 +42,12 @@
 							{% for v in r %}
 								<td id="cell" contenteditable="false">{{ v }}</td>
 							{% endfor %}
-							<td><a href="javascript:void(0)" onclick="editCell();">Edit</a></td>
+							<td class="selectable negative"><a href="javascript:void(0)" onclick="editCell(this);">Remove</a></td>
 						</tr>
 					{% endfor %}
 					</tbody>
 				</table>
+			</div>
 			{% endfor %}
 		</div>
 	</body>
