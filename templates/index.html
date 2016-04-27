@@ -3,12 +3,33 @@
 	<head>
 		<meta charset="utf-8">
 		<title>StructChat</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="/static/semantic.css">
 		<script type="text/javascript" src="/static/semantic.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
 		<script type="text/javascript">
 			var last_timestamp = "";
+			var loading_messages=true;
+
 			window.onload = function() {
+				$.get("/api/getlatestpost?timestamp="+encodeURIComponent(last_timestamp), function(data){$( "#message_feed" ).append( data );});
+				while (loading_messages) {
+					$.ajax({
+					  url: "/api/getlatestpost?timestamp="+encodeURIComponent(last_timestamp),
+					  dataType: 'html',
+					  async: false,
+					  error: function (msg) { console.log(msg); },
+					  success: function(data) {
+					  	console.log(data);
+						if (data.length<10) {loading_messages = false};
+						$( "#message_feed" ).append( data );
+					  }
+					});
+				}
+
+				$("#scrollArea").animate({
+								scrollTop:$("#scrollArea").prop("scrollHeight")
+							}, 300);
+
 				setInterval(function()
 					{
 						if (last_timestamp!="") {
