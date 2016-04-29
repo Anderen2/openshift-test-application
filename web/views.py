@@ -115,37 +115,45 @@ def signUp(request):
 	signup_status = 0
 
 	template = loader.get_template("signUp.html")
+	if request.method == "POST":
+		email = request.POST.get("email", "")
+		username = request.POST.get("username", "")
+		password = request.POST.get("password", "")
+		password_repeat = request.POST.get("password_repeat", "")
 
-	email = request.POST.get("email", "")
-	username = request.POST.get("username", "")
-	password = request.POST.get("password", "")
-	password_repeat = request.POST.get("password_repeat", "")
+		print request.POST
 
-	if UserModel.objects.filter(email=email).exists():
-		print "Email taken"
-		signup_status = EMAIL_ERROR if email else 0
+		if UserModel.objects.filter(email=email).exists():
+			print "Email taken"
+			# signup_status = EMAIL_ERROR if email else 0
+			return HttpResponse("email_error")
 
-	if password != password_repeat:
-		print "Password missmatch"
-		signup_status = PASSWORD_ERROR
+		if password != password_repeat:
+			print "Password missmatch"
+			# signup_status = PASSWORD_ERROR
+			return HttpResponse("password_missmatch")
 
-	if UserModel.objects.filter(username=username).exists():
-		print "Username taken"
-		signup_status = USERNAME_ERROR if username else 0
+		if UserModel.objects.filter(username=username).exists():
+			print "Username taken"
+			# signup_status = USERNAME_ERROR if username else 0
+			return HttpResponse("username_error")
 
-	context = RequestContext(request, {
-		'signup_status':signup_status
-	})
+		context = RequestContext(request, {
+			'signup_status':signup_status
+		})
 
-	if email and username and password and password_repeat and signup_status == 0:
-		user = UserModel(
-			username=username,
-			password=sha256_crypt.encrypt(password), 
-			email=email
-		)
-		user.save()
-		return HttpResponseRedirect("/login")
+		# if email and username and password and password_repeat and signup_status == 0:
+		if email and username and password and password_repeat:
+			user = UserModel(
+				username=username,
+				password=sha256_crypt.encrypt(password), 
+				email=email
+			)
+			user.save()
+			return HttpResponse('success')
+			# return HttpResponseRedirect("/login")
 	
+	context = RequestContext(request, {})
 	return HttpResponse(template.render(context))
 
 # Test view to see what's inside a db-table

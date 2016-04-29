@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<link rel="stylesheet" type="text/css" href="/static/semantic.css">
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script> 
+		<script src="http://code.jquery.com/jquery-latest.js"></script> 
 		<script type="text/javascript" src="/static/semantic.js"></script>
 		<script type="text/javascript" src="/static/components/form.js"></script>
 		<script type="text/javascript" src="/static/components/transition.js"></script>
@@ -12,7 +12,6 @@
 	<body>
 
 		<style type="text/css">
-
 			body {
 				background-image: url('/static/blueprint_bg.jpg');
 			}
@@ -23,91 +22,153 @@
 				max-width: 480px;
 			}
 		</style>
-		<script type="text/javascript">
-			$(document).ready(function() {
-				$('.ui.form').form({
-					fields: {
-						username: {
-							identifier: 'username',
-							rules: [
-								{
-									type: 'empty',
-									prompt: 'Please enter your username.'
-								}
-							]
-						},
-						password: {
-							identifier: 'password',
-							rules: [
-								{
-									type: 'empty',
-									prompt: 'Please enter your password.'
-								}
-							]
-						},
-						email: {
-							identifier: 'email',
-							rules: [
-								{
-									type: 'empty',
-									prompt: 'Please enter your email.'
-								}
-							]
-						}
-					}
-				});
-			});
 
-		</script>
-		{% if signup_status == 1 %}
-			<i>Email taken</i>
-		{% endif %}
-		{% if signup_status == 2 %}
-			<i>Password missmatch</i>
-		{% endif %}
-		{% if signup_status == 3 %}
-			<i>Username taken</i>
-		{% endif %}
 		<div class="ui middle aligned center aligned grid">
 			<div class="column">
 				<h2 class="ui orange image header">
 					<div class="content">Sign Up!</div>
 				</h2>
-				<form class="ui large form" method="POST" action="/signup">
+				<div class="ui large form">
 					{% csrf_token %}
 					<div class="ui stacked segment">
 						<div class="field">
 							<div class="ui left icon input">
 								<i class="mail icon"></i>
-								<input type="text" name="email" id="email" placeholder="Email"></input>
+								<input type="text" name="email" placeholder="Email"></input>
 							</div>
 						</div>
 						<div class="field">
 							<div class="ui left icon input">
 								<i class="user icon"></i>
-								<input type="text" name="username" id="username" placeholder="Username"></input>
+								<input type="text" name="username" placeholder="Username"></input>
 							</div>
 						</div>
 						<div class="field">
 							<div class="ui left icon input">
 								<i class="lock icon"></i>
-								<input type="password" name="password" id="password" placeholder="Password"></input>
+								<input type="password" name="password" placeholder="Password"></input>
 							</div>
 						</div>
 						<div class="field">
 							<div class="ui left icon input">
 								<i class="lock icon"></i>
-								<input type="password" name="password_repeat" id="password_repeat" placeholder="Repeat password"></input>
+								<input type="password" name="password_repeat" placeholder="Repeat password"></input>
 							</div>
 						</div>
 						<div class="ui fluid large orange submit button">Sign Up</div>
+						<div class="ui error message"></div>
 					</div>
-					<div class="ui error message"></div>
-				</form>
+				</div>
 				<div class="ui message">
 					Already have an account? <a href="/login">Log in</a>
 				</div>
 			</div>
 		</div>
+
+		<script type="text/javascript">
+			$('.ui.large.form').form({
+				email: {
+					identifier: 'email',
+					rules: [
+						{
+							type: 'empty',
+							prompt: 'Please enter your email.'
+						},
+						{
+							type: 'email',
+							prompt: 'Please enter a valid email.'
+						}
+					]
+				},
+				username: {
+					identifier: 'username',
+					rules: [
+						{
+							type: 'empty',
+							prompt: 'Please enter your username.'
+						}
+					]
+				},
+				password: {
+					identifier: 'password',
+					rules: [
+						{
+							type: 'empty',
+							prompt: 'Please enter your password.'
+						}
+					]
+				},
+				password_repeat: {
+					identifier: 'password_repeat',
+					rules: [
+						{
+							type: 'empty',
+							prompt: 'Please retype your password.'
+						}
+					]
+				}
+			}, {
+				onSuccess: function() {
+					var e = $(this);
+					var data = {
+							email: $(this).form('get field', 'email').val(),
+							username: $(this).form('get field', 'username').val(),
+							password: $(this).form('get field', 'password').val(),
+							password_repeat: $(this).form('get field', 'password_repeat').val(),
+							csrfmiddlewaretoken: '{{ csrf_token }}'
+					};
+
+					$.post("/signup", data)
+						.done(function(content, status) {
+							if (status == 'success') {
+								switch (content) {
+									case 'email_error':
+										e.form('add errors', [
+											'Email is already taken.'
+										]).find('.error.message').show();
+										$('.error.message').transition('shake');
+										break
+									case 'password_missmatch':
+										e.form('add errors', [
+											'Passwords does not match.'
+										]).find('.error.message').show();
+										$('.error.message').transition('shake');
+										break;
+									case 'username_error':
+										e.form('add errors', [
+											'Username is already taken.'
+										]).find('.error.message').show();
+										$('.error.message').transition('shake');
+										break;
+									case '':
+										e.form('add errors', [
+											'Server error [empty], try again later.'
+										]).find('.error.message').show();
+										$('.error.message').transition('shake');
+										break;
+									case 'success':
+										window.location.replace('/');
+										break
+								}
+							} else if (status == 'nocontent') {
+								e.form('add errors', [
+										'Server error [nocontent], try again later.'
+								]).find('.error.message').show();
+								$('.error.message').transition('shake');
+							}
+						})
+						.fail(function(d, s, r) {
+							e.form('add errors', [
+								'Server error [fail], try again later.'
+							]).find('.error.message').show();
+							$('.error.message').transition('flash');
+						});
+				},
+				onFailure: function() {
+					$('.error.message').transition('shake');
+				}
+			});
+		</script>
+
 	</body>
 </html>

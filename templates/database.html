@@ -18,9 +18,17 @@
 	</head>
 	<body>
 		<script type="text/javascript">
+			function getRow(cell) {
+				return cell.parentNode.parentNode;
+			}
+
+			function removeRow(cell) {
+				getRow().remove();
+			}
+
 			var editCell = function(cell) {
-				cell.parentNode.parentNode.remove()
-			}			
+				removeRow();
+			}
 		</script>
 		<h1>Database</h1>
 		<div class="ui segment" style="margin: 0 auto">
