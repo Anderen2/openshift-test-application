@@ -23,49 +23,13 @@
 				max-width: 480px;
 			}
 		</style>
-		<script type="text/javascript">
-			$(document).ready(function() {
-				$('.ui.form').form({
-					fields: {
-						username: {
-							identifier: 'username',
-							rules: [
-								{
-									type: 'empty',
-									prompt: 'Please enter your username.'
-								}
-							]
-						},
-						password: {
-							identifier: 'password',
-							rules: [
-								{
-									type: 'empty',
-									prompt: 'Please enter your password.'
-								}
-							]
-						}
-					}
-				});
-			});
 
-		</script>
-		{% if login_status == 1 %}
-			<i>Wrong password</i>
-		{% endif %}
-		{% if login_status == 2 %}
-			<i>Wrong username</i>
-		{% endif %}
-		{% if login_status == 3 %}
-			<i>Correct</i>
-		{% endif %}
 		<div class="ui middle aligned center aligned grid">
 			<div class="column">
 				<h2 class="ui orange image header">
 					<div class="content">Log in</div>
 				</h2>
-				<form class="ui large form" method="POST" action="/login">
-					{% csrf_token %}
+				<div class="ui large form">
 					<div class="ui stacked segment">
 						<div class="field">
 							<div class="ui left icon input">
@@ -82,11 +46,87 @@
 						<div class="ui fluid large orange submit button">Log in</div>
 					</div>
 					<div class="ui error message"></div>
-				</form>
+				</div>
 				<div class="ui message">
 					Don't have an account? <a href="/signup">Sign Up!</a>
 				</div>
 			</div>
 		</div>
+
+		<script type="text/javascript">
+			$('.ui.large.form').form({
+				username: {
+					identifier: 'username',
+					rules: [
+						{
+							type: 'empty',
+							prompt: 'Please enter your username.'
+						}
+					]
+				},
+				password: {
+					identifier: 'password',
+					rules: [
+						{
+							type: 'empty',
+							prompt: 'Please enter your password.'
+						}
+					]
+				}
+			}, {
+				onSuccess: function() {
+					var e = $(this);
+					var data = {
+						username: e.form('get field', 'username').val(),
+						password: e.form('get field', 'password').val(),
+						csrfmiddlewaretoken: '{{ csrf_token }}'
+					}
+
+					$.post('/login', data)
+						.done(function(content, status) {
+							if (status == 'success') {
+								switch (content) {
+									case 'password_error':
+										e.form('add errors', [
+											'Passwords was incorrect.'
+										]).find('.error.message').show();
+										$('.error.message').transition('shake');
+										break;
+									case 'username_error':
+										e.form('add errors', [
+											'No username named '+data.username+'.'
+										]).find('.error.message').show();
+										$('.error.message').transition('shake');
+										break;
+									case '':
+										e.form('add errors', [
+											'Server error [empty], try again later.'
+										]).find('.error.message').show();
+										$('.error.message').transition('shake');
+										break;
+									case 'success':
+										window.location.replace('/');
+										break
+								}
+							} else if (status == 'nocontent') {
+								e.form('add errors', [
+										'Server error [nocontent], try again later.'
+								]).find('.error.message').show();
+								$('.error.message').transition('shake');
+							}
+						})
+						.fail(function(d, s, r) {
+							e.form('add errors', [
+								'Server error [fail], try again later.'
+							]).find('.error.message').show();
+							$('.error.message').transition('flash');
+						});
+				},
+				onFailure: function() {
+					$('.error.message').transition('shake');
+				}
+			});
+		</script>
+		
 	</body>
 </html>

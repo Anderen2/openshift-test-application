@@ -74,27 +74,25 @@ def getLatestPost(request):
 	return HttpResponse("")
 
 def login(request):
-	WRONG_PASSWORD, WRONG_USERNAME, LOGIN_CORRECT = range(1, 4)
-
-	login_status = 0
-
-	username = request.POST.get("username", "")
-	password = request.POST.get("password", "")
-
 	if "username" in request.session:
 		print "------------------------------"
 		return HttpResponseRedirect("/")
+	
+	if request.method == 'POST':
 
-	try:
-		user = UserModel.objects.get(username=username)
-		if sha256_crypt.verify(password, user.password):
-			request.session['username'] = user.username
-			login_status = LOGIN_CORRECT
-			return HttpResponseRedirect("/")
-		else:
-			login_status = WRONG_PASSWORD if password else 0
-	except UserModel.DoesNotExist:
-		login_status = WRONG_USERNAME if username else 0
+		username = request.POST.get("username", "")
+		password = request.POST.get("password", "")
+
+
+		try:
+			user = UserModel.objects.get(username=username)
+			if sha256_crypt.verify(password, user.password):
+				request.session['username'] = user.username
+				return HttpResponse('success')
+			else:
+				return HttpResponse('password_error')
+		except UserModel.DoesNotExist:
+			return HttpResponse('username_error')
 
 	template = loader.get_template("login.html")
 	context = RequestContext(request, {
@@ -111,9 +109,6 @@ def logout(request):
 
 
 def signUp(request):
-	EMAIL_ERROR, PASSWORD_ERROR, USERNAME_ERROR = range(1, 4)
-	signup_status = 0
-
 	template = loader.get_template("signUp.html")
 	if request.method == "POST":
 		email = request.POST.get("email", "")
@@ -125,24 +120,20 @@ def signUp(request):
 
 		if UserModel.objects.filter(email=email).exists():
 			print "Email taken"
-			# signup_status = EMAIL_ERROR if email else 0
 			return HttpResponse("email_error")
 
 		if password != password_repeat:
 			print "Password missmatch"
-			# signup_status = PASSWORD_ERROR
 			return HttpResponse("password_missmatch")
 
 		if UserModel.objects.filter(username=username).exists():
 			print "Username taken"
-			# signup_status = USERNAME_ERROR if username else 0
 			return HttpResponse("username_error")
 
 		context = RequestContext(request, {
 			'signup_status':signup_status
 		})
 
-		# if email and username and password and password_repeat and signup_status == 0:
 		if email and username and password and password_repeat:
 			user = UserModel(
 				username=username,
@@ -151,7 +142,6 @@ def signUp(request):
 			)
 			user.save()
 			return HttpResponse('success')
-			# return HttpResponseRedirect("/login")
 	
 	context = RequestContext(request, {})
 	return HttpResponse(template.render(context))
