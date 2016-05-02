@@ -12,7 +12,7 @@ from web.models import UserModel, RoomModel, MessageModel
 def index(request):
 	template = loader.get_template("index.html")
 
-	context = RequestContext(request, {})
+	context = RequestContext(request, {'request':request})
 	if "username" not in request.session.keys():
 		return HttpResponseRedirect("/login")
 
@@ -95,9 +95,7 @@ def login(request):
 			return HttpResponse('username_error')
 
 	template = loader.get_template("login.html")
-	context = RequestContext(request, {
-		'login_status':login_status
-	})
+	context = RequestContext(request, {'request':request})
 	return HttpResponse(template.render(context))
 
 def logout(request):
@@ -130,9 +128,7 @@ def signUp(request):
 			print "Username taken"
 			return HttpResponse("username_error")
 
-		context = RequestContext(request, {
-			'signup_status':signup_status
-		})
+		context = RequestContext(request, {'request':request})
 
 		if email and username and password and password_repeat:
 			user = UserModel(
@@ -143,7 +139,7 @@ def signUp(request):
 			user.save()
 			return HttpResponse('success')
 	
-	context = RequestContext(request, {})
+	context = RequestContext(request, {'request':request})
 	return HttpResponse(template.render(context))
 
 # Test view to see what's inside a db-table
@@ -159,6 +155,13 @@ def displayDatabase(request):
 		})
 
 	context = RequestContext(request, {
-		'models':models
+		'models':models,
+		'request':request
 	})
+	return HttpResponse(template.render(context))
+
+def home(request):
+	template = loader.get_template('home.html')
+	context = RequestContext(request, {'request':request})
+	print request.get_full_path
 	return HttpResponse(template.render(context))

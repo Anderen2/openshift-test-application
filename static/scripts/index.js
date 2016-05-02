@@ -47,9 +47,9 @@ if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and 
 
 // document.addEventListener(visibilityChange, handleVisibilityChange, false);
 
-function scroll_area() {
-	$("#scroll_area").animate({
-		scrollTop:$("#scroll_area").prop("scrollHeight")
+function scrollArea() {
+	$(".scroll.area").animate({
+		scrollTop:$(".scroll.area").prop("scrollHeight")
 	}, 300);
 }
 
@@ -68,7 +68,7 @@ window.onload = function() {
 		});
 	}
 
-	scroll_area();
+	scrollArea();
 
 	setInterval(function()
 		{
@@ -79,7 +79,7 @@ window.onload = function() {
 						if (document[hidden]) {
 							new Notification(data);
 						};
-						scroll_area();
+						scrollArea();
 					};
 				});
 

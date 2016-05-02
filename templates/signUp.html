@@ -2,64 +2,59 @@
 <html>
 	<head>
 		<meta charset="utf-8">
+		<script src="/static/jquery-2.2.3.js"></script> 
 		<link rel="stylesheet" type="text/css" href="/static/semantic.css">
-		<script src="http://code.jquery.com/jquery-latest.js"></script> 
 		<script type="text/javascript" src="/static/semantic.js"></script>
 		<script type="text/javascript" src="/static/components/form.js"></script>
 		<script type="text/javascript" src="/static/components/transition.js"></script>
+		<link rel="stylesheet" type="text/css" href="/static/CSS/commonStyle.css">
+		<script type="text/javascript" src="/static/scripts/toggleSidebar.js"></script>
 		<title>Sign Up!</title>
 	</head>
 	<body>
-
-		<style type="text/css">
-			body {
-				background-image: url('/static/blueprint_bg.jpg');
-			}
-			body > .grid {
-				height: 100%;
-			}
-			.column {
-				max-width: 480px;
-			}
-		</style>
-
-		<div class="ui middle aligned center aligned grid">
-			<div class="column">
-				<h2 class="ui orange image header">
-					<div class="content">Sign Up!</div>
-				</h2>
-				<div class="ui large form">
-					<div class="ui stacked segment">
-						<div class="field">
-							<div class="ui left icon input">
-								<i class="mail icon"></i>
-								<input type="text" name="email" placeholder="Email"></input>
-							</div>
-						</div>
-						<div class="field">
-							<div class="ui left icon input">
-								<i class="user icon"></i>
-								<input type="text" name="username" placeholder="Username"></input>
-							</div>
-						</div>
-						<div class="field">
-							<div class="ui left icon input">
-								<i class="lock icon"></i>
-								<input type="password" name="password" placeholder="Password"></input>
-							</div>
-						</div>
-						<div class="field">
-							<div class="ui left icon input">
-								<i class="lock icon"></i>
-								<input type="password" name="password_repeat" placeholder="Repeat password"></input>
-							</div>
-						</div>
-						<div class="ui fluid large orange submit button">Sign Up</div>
+		{% include "sidebar.html" %}
+		<div class="pusher landing-image">
+			{% include "header.html" %}
+			<div class="ui middle aligned center aligned grid">
+				<div class="column">
+					<div class="white ui message">
+						<h2 class="ui orange image header">
+							<div class="content">Sign Up!</div>
+						</h2>
 					</div>
-					<div class="ui error message"></div>
-				</div>
-				<div class="ui message">
-					Already have an account? <a href="/login">Log in</a>
+					<div class="ui large form">
+						<div class="ui stacked segment">
+							<div class="field">
+								<div class="ui left icon input">
+									<i class="mail icon"></i>
+									<input type="text" name="email" placeholder="Email"></input>
+								</div>
+							</div>
+							<div class="field">
+								<div class="ui left icon input">
+									<i class="user icon"></i>
+									<input type="text" name="username" placeholder="Username"></input>
+								</div>
+							</div>
+							<div class="field">
+								<div class="ui left icon input">
+									<i class="lock icon"></i>
+									<input type="password" name="password" placeholder="Password"></input>
+								</div>
+							</div>
+							<div class="field">
+								<div class="ui left icon input">
+									<i class="lock icon"></i>
+									<input type="password" name="password_repeat" placeholder="Repeat password"></input>
+								</div>
+							</div>
+							<div class="ui fluid large orange submit button">Sign Up</div>
+						</div>
+						<div class="ui error message"></div>
+					</div>
+					<div class="ui message">
+						Already have an account? <a href="/login">Log in</a>
+					</div>
 				</div>
 			</div>
 		</div>

@@ -1,8 +1,18 @@
+
+
 <nav class="ui inverted menu" style="margin: 0 auto;">
-	<a class="item"><i class="sidebar icon"></i></a>
-	<a class="active header orange item"><b>StructChat</b></a>
-	<a class="item"><i class="clock icon"></i>Sebastian - just chatted</a> <!-- This is going to be updated each time people send a chat -->
+	<a class="item" onclick="toggleSidebar();"><i class="sidebar icon"></i></a>
+	<a class="active header orange item" href="/"><b>StructChat</b></a>
+	{% if request.get_full_path = "/" %}
+		<a class="item"><i class="clock icon"></i>Sebastian - just chatted</a> <!-- This is going to be updated each time people send a chat -->
+	{% endif %}
 	<div class="right menu">
-		<a class="item" href="/logout">Log Out</a>
+		{% if request.session.username %}
+			<a class="item" href="/logout">Log Out</a>
+		{% endif %}
 	</div>
 </nav>
+
+<script type="text/javascript">
+
+</script>

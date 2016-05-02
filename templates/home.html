@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Home</title>
+		<script src="/static/jquery-2.2.3.js"></script> 
+		<link rel="stylesheet" type="text/css" href="/static/semantic.css">
+		<script type="text/javascript" src="/static/semantic.js"></script>
+		<script type="text/javascript" src="/static/components/transition.js"></script>
+		<link rel="stylesheet" type="text/css" href="/static/CSS/commonStyle.css">
+		<script type="text/javascript" src="/static/scripts/toggleSidebar.js"></script>
+		<style type="text/css">
+			/* .landing-image, body {
+				background-image: url('/static/blueprint_bg.jpg') !important;
+				background-size: cover !important;
+			}
+			.pusher,.ui.segment {
+				min-height: 80%;
+				height: 95%;
+			}
+			.ui.segment {
+				opacity: 0.8;
+				overflow: auto;
+			}
+
+			body > .pusher {
+				height: 90%;
+			}
+
+			.pusher > .grid {
+				height: 100%;
+			}
+			.column {
+				max-width: 480px;
+			} */
+
+		</style>
+		<script type="text/javascript">
+			$('.ui.left.sidebar').sidebar('setting', 'transition', 'uncover');
+			// $('.ui.left.sidebar').sidebar('attach events', '.toggle.item');
+
+			function toggleSidebar() {
+				$('.ui.left.sidebar').sidebar('toggle');
+			}
+
+		</script>
+	</head>
+	<body>
+		{% include "sidebar.html" %}
+		<div class="pusher landing-image">
+			{% include "header.html" %}
+			<div class="ui middle aligned center aligned grid">
+				<div class="column">
+					<div class="ui segment">
+						<h1 class="ui header">Welcome to StructChat!</h1>
+						<p>StructChat is <b><i>the</i></b> place to be when you want to chat with your friends or family!</p>
+						<a href="/login">Click here to login</a>
+					</div>
+				</div>
+			</div>
+			<!-- <div class="ui segment scroll area">
+				<div class="ui feed">
+
+				</div>
+			</div> -->
+		</div>
+	</body>
+</html>
