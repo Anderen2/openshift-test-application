@@ -3,23 +3,20 @@
 	<head>
 		<meta charset="utf-8">
 		<title>StructChat</title>
-		<script src="/static/jquery-2.2.3.js"></script>
-		<link rel="stylesheet" type="text/css" href="/static/semantic.css">
-		<script type="text/javascript" src="/static/semantic.js"></script>
-		<link rel="stylesheet" type="text/css" href="/static/CSS/index.css">
+		{% include "includes.html" %}
+		<link rel="stylesheet" type="text/css" href="/static/css/index.css">
 		<script type="text/javascript" src="/static/scripts/index.js"></script>
-		<script type="text/javascript" src="/static/scripts/toggleSidebar.js"></script>
 	</head>
 	<body>
 		{% include "sidebar.html" %}
 		<div class="pusher landing-image">
 			{% include "header.html" %}
-			<br>
-			<div class="ui segment scroll area" id="scroll area" style="margin: 0 auto;">
+			<!-- <br> -->
+			<div class="ui loading segment scroll area" style="margin: 0 auto;">
 				<div class="ui feed" id="message_feed" name="message_feed"></div>
 			</div>
 			<br>
-			<div class="ui segment" style="margin: 0 auto;">
+			<div class="ui bottom attached segment">
 				<form onsubmit="return sendChatMessage();">
 					<div class="ui action input" style="width:100%;">
 						<input placeholder="type message here" name="message_input" id="message_input" type="text">

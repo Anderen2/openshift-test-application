@@ -1,5 +1,3 @@
-
-
 <nav class="ui inverted menu" style="margin: 0 auto;">
 	<a class="item" onclick="toggleSidebar();"><i class="sidebar icon"></i></a>
 	<a class="active header orange item" href="/"><b>StructChat</b></a>
@@ -7,12 +5,9 @@
 		<a class="item"><i class="clock icon"></i>Sebastian - just chatted</a> <!-- This is going to be updated each time people send a chat -->
 	{% endif %}
 	<div class="right menu">
+		<div class="image header item" data-content="StructChat is still in Beta, so please be patient."><i class="warning circle icon"></i>Beta</div>
 		{% if request.session.username %}
 			<a class="item" href="/logout">Log Out</a>
 		{% endif %}
 	</div>
 </nav>
-
-<script type="text/javascript">
-
-</script>

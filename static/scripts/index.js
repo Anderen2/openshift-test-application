@@ -54,6 +54,7 @@ function scrollArea() {
 }
 
 window.onload = function() {
+	// $('.scroll.area').addClass('loading');
 	$.get("/api/getlatestpost?timestamp="+encodeURIComponent(last_timestamp), function(data){$( "#message_feed" ).append( data );});
 	while (loading_messages) {
 		$.ajax({
