@@ -1,9 +1,7 @@
 <div class="left vertical inverted ui sidebar menu">
 	<h2 class="header item">StructChat Menu</h2>
 	<a class="item" href="/home"><i class="home icon"></i>Home</a>
-	{% if request.get_full_path != "/login" %}
-		<a class="item" href="/login">Login</a>
-	{% endif %}
+	<a class="item" href="/login">Login</a>
 	<a class="item" href="/signup">Sign Up</a>
 	{% if request.session.username %}
 		<a class="item" onclick="alert('This feature is yet to be implemented.');"><i class="plus icon"></i>Create Room</a>

@@ -1,0 +1,23 @@
+.landing-image, body {
+	background-image: url('/static/blueprint_bg.jpg') !important;
+	background-size: cover !important;
+}
+
+.menu {
+	/* max-width: 95%; */
+}
+
+.segment {
+	/* max-width: 95%; */
+	opacity: 0.9;
+	overflow: auto;
+}
+
+body > .pusher {
+	height: 100%;
+}
+
+.scroll.area {
+	height: 85%;
+	max-height: 85%;
+}

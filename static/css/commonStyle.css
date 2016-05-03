@@ -1,0 +1,17 @@
+.landing-image, body {
+	background-image: url('/static/blueprint_bg.jpg') !important;
+	background-size: cover !important;
+}
+
+.pusher {
+	height: 90%;
+}
+
+.grid {
+	height: 100%;
+	width: 95%;
+}
+
+.column {
+	max-width: 480px;
+}
