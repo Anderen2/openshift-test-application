@@ -2,61 +2,100 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<script src="/static/jquery-2.2.3.js"></script>
-		<link rel="stylesheet" type="text/css" href="/static/semantic.css">
-		<script type="text/javascript" src="/static/semantic.js"></script>
+		{% comment "optional note" %}
+		    <script src="/static/jquery-2.2.3.js"></script>
+				<link rel="stylesheet" type="text/css" href="/static/semantic.css">
+				<script type="text/javascript" src="/static/semantic.js"></script>
+				<link rel="stylesheet" type="text/css" href="/static/css/commonStyle.css">
+		{% endcomment %}
+		{% include "includes.html" %}
 		<title>Database</title>
 		<style type="text/css">
-			h1 {
+
+			.scroll.area {
+				overflow: auto;
+				max-height: 95%;
+			}
+
+			.orange.image.header {
+				margin: auto;
 				padding-left: 60px;
-				padding-top: 10px;
 			}
 			.segment {
 				width: 95%;
+			}
+			.compact.ui.warning.message {
+
 			}
 		</style>
 	</head>
 	<body>
 		<script type="text/javascript">
-			function getRow(cell) {
-				return cell.parentNode.parentNode;
-			}
-
-			function removeRow(cell) {
-				getRow().remove();
+			function removeRow(rowNr) {
+				if (confirm("Are you sure you want to delete this row (Just a test, doesn't work on server)?")) {
+					$('#tb-row-'+rowNr).remove();
+				}
 			}
 
 			var editCell = function(cell) {
-				removeRow();
+				// 
 			}
+
+			$(document).ready(function() {
+				$('.selectable.warning').popup({
+					hoverable: true,
+					on: 'click',
+					position: 'bottom center'
+				});
+				/*$('.user-popup')
+					.popup({
+				    	popup    : $('.ui.popup'),
+				    	hoverable: true,
+				    	on		 : 'click',
+				    	position : 'bottom left'
+				});*/
+			});
 		</script>
-		<h1>Database</h1>
-		<div class="ui segment" style="margin: 0 auto">
-			{% for m in models %}
-			<div class="ui segment" style="margin: 0 auto; margin-bottom: 10px">
-				<h2>{{ m.name }}</h2>
-				<table class="ui celled table">
-					<thead>
-						<tr>
-							{% for c in m.columns %}
-								<th>{{ c }}</th>
-							{% endfor %}
-							<th>Edit</th>
-						</tr>
-					</thead>
-					<tbody>
-					{% for r in m.rows %}
-						<tr>
-							{% for v in r %}
-								<td id="cell" contenteditable="false">{{ v }}</td>
-							{% endfor %}
-							<td class="selectable negative"><a href="javascript:void(0)" onclick="editCell(this);">Remove</a></td>
-						</tr>
-					{% endfor %}
-					</tbody>
-				</table>
+		{% include "sidebar.html" %}
+		<div class="pusher landing-image">
+			{% include "header.html" %}
+			<h1 class="ui orange image header">Database</h1>
+			<div class="ui segment scroll area" style="margin: 0 auto; webkit-overflow-scrolling: touch;">
+				<div class="compact ui warning message">
+					Nothing works here, just a displaying of the db tables.
+				</div>
+				{% for m in models %}
+				<div class="ui segment" style="margin: 0 auto; margin-bottom: 10px;">
+					<h2>{{ m.name }}</h2>
+					<table class="ui celled table">
+						<thead>
+							<tr>
+								{% for c in m.columns %}
+									<th>{{ c }}</th>
+								{% endfor %}
+								<th>Edit</th>
+							</tr>
+						</thead>
+						<tbody>
+						{% for r in m.rows %}
+							<tr id="tb-row-{{ forloop.counter0 }}">
+								{% for v in r %}
+									<td id="cell" contenteditable="false">{{ v }}</td>
+								{% endfor %}
+								<td class="selectable center aligned warning user-popup" data-html=
+									"<div class='ui link list'>
+										<a class='item'>Edit values</a>
+										<a class='item' onclick='removeRow({{forloop.counter0}})'>Remove</a>
+									</div>">
+									Edit
+								</td>
+							</tr>
+						{% endfor %}
+						</tbody>
+					</table>
+				</div>
+				{% endfor %}
 			</div>
-			{% endfor %}
 		</div>
 	</body>
 </html>

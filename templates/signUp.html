@@ -65,6 +65,10 @@
 						{
 							type: 'email',
 							prompt: 'Please enter a valid email.'
+						},
+						{
+							type: 'maxLength[254]',
+							prompt: 'Please enter a valid email (i.e. no longer than 254 characters).'
 						}
 					]
 				},
@@ -74,6 +78,14 @@
 						{
 							type: 'empty',
 							prompt: 'Please enter your username.'
+						},
+						{
+							type: 'minLength[3]',
+							prompt: 'Your username must be at least {ruleValue} characters.'
+						},
+						{
+							type: 'maxLength[32]',
+							prompt: 'Your username cannot be longer than {ruleValue} characters.'
 						}
 					]
 				},
@@ -83,7 +95,7 @@
 						{
 							type: 'empty',
 							prompt: 'Please enter your password.'
-						}
+						},
 					]
 				},
 				password_repeat: {

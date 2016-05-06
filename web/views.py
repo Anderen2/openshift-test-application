@@ -16,6 +16,7 @@ def index(request):
 	if "username" not in request.session.keys():
 		return HttpResponseRedirect("/login")
 
+	print request
 	return HttpResponse(template.render(context))
 
 def post(request):
@@ -103,7 +104,7 @@ def logout(request):
 		del request.session['username']
 	except KeyError:
 		pass
-	return HttpResponseRedirect("/login")
+	return HttpResponseRedirect('/login')
 
 
 def signUp(request):
@@ -144,6 +145,10 @@ def signUp(request):
 
 # Test view to see what's inside a db-table
 def displayDatabase(request):
+	if 'username' not in request.session or request.session['username'].lower() not in ['sebastian', 'ajs']:
+		context = RequestContext(request, {'errornumber':520, 'errormessage':'You do not have permission to enter this page.'})
+		return HttpResponse(loader.get_template('errorPage.html').render(context))
+		# return HttpResponse('You do not have permission to enter this page.\n')
 	template = loader.get_template('database.html')
 
 	models = []

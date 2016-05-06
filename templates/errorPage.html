@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		{% include "includes.html" %}
+		<title>Error {{ errornumber }}</title>
+	</head>
+	<body class="pushable">
+		{% include "sidebar.html" %}
+		<div class="pusher landing-image">
+			{% include "header.html" %}
+			<div class="center aligned middle aligned ui grid">
+				<div class="column">
+					<div class="stacked ui segment">
+						<h2 class="header">Error: {{ errornumber }}</h2>
+						<p>{{ errormessage }}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
