@@ -2,6 +2,8 @@ from datetime import datetime, timedelta
 
 from passlib.hash import sha256_crypt
 
+from markdown2 import markdown # use this maybe?
+
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext, loader
@@ -12,11 +14,21 @@ from web.models import UserModel, RoomModel, MessageModel
 def index(request):
 	template = loader.get_template("index.html")
 
-	context = RequestContext(request, {'request':request})
+	messages = []
+	for message in MessageModel.objects.all():
+		messages.append({
+			'devicetype':message.device_type,
+			'username':message.username,
+			'date':message.datetime.strftime("%Y-%m-%d %H:%M:%S"),
+			'content':markdown(message.content),
+			'rating':''
+		})
+
+	context = RequestContext(request, {'request':request, 'posts':messages, 'last_timestamp':messages[-1]['date']})
 	if "username" not in request.session.keys():
 		return HttpResponseRedirect("/login")
 
-	print request
+	# print request
 	return HttpResponse(template.render(context))
 
 def post(request):
@@ -61,14 +73,16 @@ def getLatestPost(request):
 	query = MessageModel.objects.filter(datetime__range=(earlier, datetime.now()))
 
 	template = loader.get_template("event.html")
-
 	for message in query:
 		context = RequestContext(request, {
-			'avatar':message.device_type,
-			'username':message.username,
-			'date':message.datetime.strftime("%Y-%m-%d %H:%M:%S"),
-			'content':message.content,
-			'rating':''
+			'request':request,
+			'post': {
+				'devicetype':message.device_type,
+				'username':message.username,
+				'date':message.datetime.strftime("%Y-%m-%d %H:%M:%S"),
+				'content':markdown(message.content),
+				'rating':''
+			}
 		})
 		return HttpResponse(template.render(context))
 
@@ -78,7 +92,7 @@ def login(request):
 	if "username" in request.session:
 		print "------------------------------"
 		return HttpResponseRedirect("/")
-	
+
 	if request.method == 'POST':
 
 		username = request.POST.get("username", "")
@@ -115,7 +129,7 @@ def signUp(request):
 		password = request.POST.get("password", "")
 		password_repeat = request.POST.get("password_repeat", "")
 
-		print request.POST
+		# print request.POST
 
 		if UserModel.objects.filter(email=email).exists():
 			print "Email taken"
@@ -134,18 +148,18 @@ def signUp(request):
 		if email and username and password and password_repeat:
 			user = UserModel(
 				username=username,
-				password=sha256_crypt.encrypt(password), 
+				password=sha256_crypt.encrypt(password),
 				email=email
 			)
 			user.save()
 			return HttpResponse('success')
-	
+
 	context = RequestContext(request, {'request':request})
 	return HttpResponse(template.render(context))
 
 # Test view to see what's inside a db-table
 def displayDatabase(request):
-	if 'username' not in request.session or request.session['username'].lower() not in ['sebastian', 'ajs']:
+	if 'username' not in request.session or request.session['username'].lower() not in ['sebastian', 'seb', 'ajs']:
 		context = RequestContext(request, {'errornumber':520, 'errormessage':'You do not have permission to enter this page.'})
 		return HttpResponse(loader.get_template('errorPage.html').render(context))
 		# return HttpResponse('You do not have permission to enter this page.\n')
@@ -168,5 +182,5 @@ def displayDatabase(request):
 def home(request):
 	template = loader.get_template('home.html')
 	context = RequestContext(request, {'request':request})
-	print request.get_full_path
+	# print request.get_full_path
 	return HttpResponse(template.render(context))

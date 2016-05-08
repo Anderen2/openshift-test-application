@@ -1,9 +1,9 @@
 .segment {
 	opacity: 0.9;
-	overflow: auto;
 }
 
 .scroll.area {
 	height: 85%;
 	max-height: 85%;
+	overflow: auto;
 }

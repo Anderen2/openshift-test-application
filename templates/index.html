@@ -5,7 +5,106 @@
 		<title>StructChat</title>
 		{% include "includes.html" %}
 		<link rel="stylesheet" type="text/css" href="/static/css/index.css">
-		<script type="text/javascript" src="/static/scripts/index.js"></script>
+		<!-- <script type="text/javascript" src="https://raw.githubusercontent.com/p01/mmd.js/master/mmd.min.js"></script> -->
+		<!-- <script type="text/javascript" src="/static/scripts/index.js"></script> -->
+		<script type="text/javascript">
+			var last_timestamp = "{{ last_timestamp }}";
+			var loading_messages=true;
+			// function notifyMe() {
+			  if (!("Notification" in window)) {
+			    alert("This browser does not support desktop notification");
+			    console.log("Desktop Notifications disabled")
+			  }
+			  else if (Notification.permission === "granted") {
+			    console.log("Desktop Notifications enabled")
+			  }
+			  else if (Notification.permission !== 'denied') {
+			    Notification.requestPermission(function (permission) {
+			      if (permission === "granted") {
+			        console.log("Desktop Notifications active")
+			      }
+			    });
+			  }
+
+			// var notification = new Notification("Hi there!");
+
+			// Set the name of the hidden property and the change event for visibility
+			var hidden, visibilityChange;
+			if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
+			  hidden = "hidden";
+			  visibilityChange = "visibilitychange";
+			} else if (typeof document.mozHidden !== "undefined") {
+			  hidden = "mozHidden";
+			  visibilityChange = "mozvisibilitychange";
+			} else if (typeof document.msHidden !== "undefined") {
+			  hidden = "msHidden";
+			  visibilityChange = "msvisibilitychange";
+			} else if (typeof document.webkitHidden !== "undefined") {
+			  hidden = "webkitHidden";
+			  visibilityChange = "webkitvisibilitychange";
+			}
+
+			// If the page is hidden, pause the video;
+			// if the page is shown, play the video
+			// function handleVisibilityChange() {
+			//   if (document[hidden]) {
+			//     videoElement.pause();
+			//   } else {
+			//     videoElement.play();
+			//   }
+			// }
+
+			// document.addEventListener(visibilityChange, handleVisibilityChange, false);
+
+			function scrollArea() {
+				$(".scroll.area").animate({
+					scrollTop:$(".scroll.area").prop("scrollHeight")
+				}, 300);
+			}
+
+			function sendChatMessage() {
+				console.log($('#message_input')[0].value)
+				$.get("/post?message_input="+encodeURIComponent($('#message_input')[0].value), function(data){})
+					.done(function(){
+						// window.last_timestamp = $('#date').first().text();
+						// alert("Post: "+last_timestamp);
+					}
+				);
+				$('#message_input')[0].value=""
+				return false
+			}
+
+			window.onload = function() {
+				scrollArea();
+
+				setInterval(function()
+					{
+						if (window.last_timestamp) {
+							$.get("/api/getlatestpost?timestamp="+encodeURIComponent(last_timestamp), function(data){
+								$( "#message_feed" ).append( data );
+								// alert(data);
+								if (data.length>10) {
+									// alert("Load: "+last_timestamp);
+									// window.last_timestamp = $('#date').first().text();
+									if (document[hidden]) {
+										new Notification(data);
+									};
+									scrollArea();
+								};
+							});
+
+						}
+
+						else {
+							$.get("/api/getlatestpost", function(data){
+								$( "#message_feed" ).append( data );
+							});
+						}
+					},
+					1000);
+			};
+		</script>
+
 	</head>
 	<body>
 		{% include "sidebar.html" %}
@@ -13,13 +112,17 @@
 			{% include "header.html" %}
 			<!-- <br> -->
 			<div class="ui {% comment "optional note" %}loading{% endcomment %} segment scroll area" style="-webkit-overflow-scrolling: touch;">
-				<div class="ui feed" id="message_feed" name="message_feed"></div>
+				<div class="ui feed" id="message_feed" name="message_feed">
+					{% for post in posts %}
+						{% include "event.html" %}
+					{% endfor %}
+				</div>
 			</div>
 			<br>
 			<div class="ui bottom attached segment">
 				<form onsubmit="return sendChatMessage();">
 					<div class="ui action input" style="width:100%;">
-						<input placeholder="type message here" name="message_input" id="message_input" type="text">
+						<input placeholder="type message here" autocomplete="off" name="message_input" id="message_input" type="textarea">
 						<button onclick="sendChatMessage();" class="ui orange button">Send</button>
 					</div>
 				</form>

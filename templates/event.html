@@ -1,21 +1,21 @@
 <div class="event">
 	<div class="label">
 		<!-- <img src=""> -->
-		<i class="{{avatar}} icon"></i> <!-- Should this show device-type? -->
+		<i class="{{post.devicetype}} icon"></i>
 	</div>
 	<div class="content">
 		<div class="summary">
-			<a class="user">{{username}}</a> chatted
-			<div class="date">{{date}}</div>
+			<a class="user">{{post.username}}</a> chatted
+			<div class="date" id="date">{{post.date}}</div>
 		</div>
-		<div class="extra text">
-			{{content}}
+		<div class="exra text" style="max-width: 500px;">
+			{{ post.content | safe }}
 		</div>
 		<div class="meta">
 			<a class="like">
-				<i class="heart icon"></i> {{rating}} rating
+				<i class="heart icon"></i> {{post.rating}} rating
 			</a>
 		</div>
 	</div>
 </div>
-<script type="text/javascript">last_timestamp="{{date}}";</script>
+<script type="text/javascript">window.last_timestamp="{{post.date}}";</script>

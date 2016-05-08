@@ -20,8 +20,8 @@ var loading_messages=true;
 // var notification = new Notification("Hi there!");
 
 // Set the name of the hidden property and the change event for visibility
-var hidden, visibilityChange; 
-if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support 
+var hidden, visibilityChange;
+if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
   hidden = "hidden";
   visibilityChange = "visibilitychange";
 } else if (typeof document.mozHidden !== "undefined") {
@@ -51,6 +51,13 @@ function scrollArea() {
 	$(".scroll.area").animate({
 		scrollTop:$(".scroll.area").prop("scrollHeight")
 	}, 300);
+}
+
+function sendChatMessage() {
+	console.log($('#message_input')[0].value)
+	$.get("/post?message_input="+encodeURIComponent($('#message_input')[0].value), function(data){});
+	$('#message_input')[0].value=""
+	return false
 }
 
 window.onload = function() {
@@ -94,10 +101,3 @@ window.onload = function() {
 		},
 		1000);
 };
-
-function sendChatMessage() {
-	console.log($('#message_input')[0].value)
-	$.get("/post?message_input="+encodeURIComponent($('#message_input')[0].value), function(data){});
-	$('#message_input')[0].value=""
-	return false
-}
