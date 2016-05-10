@@ -2,12 +2,13 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1"> <!-- This to support mobile and tablets -->
+		<!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
 		<title>StructChat</title>
 		{% include "includes.html" %}
 		<link rel="stylesheet" type="text/css" href="/static/css/index.css">
 		<!-- <script type="text/javascript" src="https://raw.githubusercontent.com/p01/mmd.js/master/mmd.min.js"></script> -->
 		<!-- <script type="text/javascript" src="/static/scripts/index.js"></script> -->
+		<link rel="stylesheet" type="text/css" href="/static/css/pygment.css">
 		<script type="text/javascript">
 			var last_timestamp = "{{ last_timestamp }}";
 			var loading_messages=true;
@@ -65,6 +66,9 @@
 
 			function sendChatMessage() {
 				console.log($('#message_input')[0].value)
+				if ($('#message_input')[0].value.length == 0) {
+					return false;
+				}
 				$.get("/post?message_input="+encodeURIComponent($('#message_input')[0].value), function(data){})
 					.done(function(){}
 				);
@@ -128,7 +132,7 @@
 		<div class="pusher landing-image">
 			{% include "header.html" %}
 			<div class="ui {% comment "optional note" %}loading{% endcomment %} segment scroll area">
-				<div class="ui feed" id="message_feed" name="message_feed" style="max-height:85%;">
+				<div class="ui feed" id="message_feed" name="message_feed" style="--webkit-overflow-scrolling: touch; max-height:85%;">
 					{% for post in posts %}
 						{% include "event.html" %}
 					{% endfor %}
@@ -139,7 +143,7 @@
 				<!-- <form onsubmit="return sendChatMessage();"> -->
 				<div class="ui form">
 					<div class="ui action input" style="width:100%;">
-						<textarea placeholder="type message here" autocomplete="off" name="message_input" id="message_input" type="textarea"></textarea>
+						<textarea rows="2" placeholder="type message here" name="message_input" id="message_input" type="text"></textarea>
 						<button onclick="sendChatMessage();" class="ui orange button" style="height: 38">Send</button>
 					</div>
 				</div>

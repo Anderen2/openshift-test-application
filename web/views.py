@@ -52,7 +52,7 @@ def post(request):
 	message = MessageModel(
 		device_type=getDeviceType(request),
 		username=request.session['username'],
-		content=markdown(content),
+		content=markdown(content, extras=["fenced-code-blocks"]),
 		datetime=datetime.now(),
 		rating=""
 	)
