@@ -2,6 +2,7 @@
 
 # Structchat Web
 # Component: Web frontend
+# Module: Views
 
 #Std. lib
 from datetime import datetime, timedelta
