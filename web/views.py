@@ -38,7 +38,7 @@ def index(request):
 	context = RequestContext(request, {
 		'request':request,
 		'posts':messages,
-		'last_timestamp':messages[-1]['date']
+		# 'last_timestamp':messages[-1]['date']
 	})
 	if "username" not in request.session.keys():
 		return HttpResponseRedirect("/login")
