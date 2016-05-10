@@ -51,8 +51,8 @@ def post(request):
 		return HttpResponse("Go fuck a goat")
 
 	markdowns = markdown(content, extras=["fenced-code-blocks"])
-	markdowns.replace("&amp;lt", "&lt")
-	markdowns.replace("&amp;gt", "&gt")
+	markdowns = markdowns.replace("&amp;lt", "&lt")
+	markdowns = markdowns.replace("&amp;gt", "&gt")
 
 	message = MessageModel(
 		device_type=getDeviceType(request),
