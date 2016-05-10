@@ -2,7 +2,6 @@
 
 # Structchat Web
 # Component: Web frontend
-# Module: Views
 
 #Std. lib
 from datetime import datetime, timedelta
@@ -15,7 +14,7 @@ from django.db import connection
 
 #Third-party
 from passlib.hash import sha256_crypt
-from markdown2 import markdown # use this maybe?
+from markdown2 import markdown
 
 #Self-contained
 from web.models import UserModel, RoomModel, MessageModel
