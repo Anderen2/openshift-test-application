@@ -1,15 +1,25 @@
+#!/usr/bin/python
+
+# Structchat Web
+# Component: Web frontend
+# Module: Views
+
+#Std. lib
 from datetime import datetime, timedelta
 
-from passlib.hash import sha256_crypt
-
-from markdown2 import markdown # use this maybe?
-
+#Django modules
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext, loader
 from django.db import connection
 
+#Third-party
+from passlib.hash import sha256_crypt
+from markdown2 import markdown # use this maybe?
+
+#Self-contained
 from web.models import UserModel, RoomModel, MessageModel
+from utils import escaping
 
 def index(request):
 	template = loader.get_template("index.html")
@@ -32,11 +42,10 @@ def index(request):
 	if "username" not in request.session.keys():
 		return HttpResponseRedirect("/login")
 
-	# print request
 	return HttpResponse(template.render(context))
 
 def post(request):
-	content = request.GET.get("message_input", None)
+	content = escaping.escape_tags(request.GET.get("message_input", None))
 	if not content:
 		return HttpResponse("Go fuck a goat")
 
@@ -94,7 +103,6 @@ def getLatestPost(request):
 
 def login(request):
 	if "username" in request.session:
-		print "------------------------------"
 		return HttpResponseRedirect("/")
 
 	if request.method == 'POST':
@@ -133,18 +141,13 @@ def signUp(request):
 		password = request.POST.get("password", "")
 		password_repeat = request.POST.get("password_repeat", "")
 
-		# print request.POST
-
 		if UserModel.objects.filter(email=email).exists():
-			print "Email taken"
 			return HttpResponse("email_error")
 
 		if password != password_repeat:
-			print "Password missmatch"
 			return HttpResponse("password_missmatch")
 
 		if UserModel.objects.filter(username=username).exists():
-			print "Username taken"
 			return HttpResponse("username_error")
 
 		context = RequestContext(request, {'request':request})
@@ -186,5 +189,4 @@ def displayDatabase(request):
 def home(request):
 	template = loader.get_template('home.html')
 	context = RequestContext(request, {'request':request})
-	# print request.get_full_path
 	return HttpResponse(template.render(context))
