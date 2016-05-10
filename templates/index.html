@@ -81,8 +81,8 @@
 
 				setInterval(function()
 					{
-						if (window.last_timestamp) {
-							$.get("/api/getlatestpost?timestamp="+encodeURIComponent(last_timestamp), function(data){
+						if (window.message_id) {
+							$.get("/api/getlatestpost?message_id="+encodeURIComponent(window.message_id), function(data){
 								$( "#message_feed" ).append( data );
 								if (data.length>10) {
 									if (document[hidden]) {
@@ -107,21 +107,14 @@
 					scrollTop:$('body').prop("scrollHeight")
 				}, 300);
 
-			$('#message_input').keypress(function(event){
-				// alert('KeyCode: '+event.keyCode)
-				if (event.keyCode == 13) {
-					// $('#message_input')[0].value = "";
-
-					// alert('enterKey');
-					if (event.shiftKey) {
-						// alert('shift enter!');
-						// $('#message_input')[0].value += "\n";
-					} else {
-						sendChatMessage();
-						$('#message_input')[0].value = "";
+				$('#message_input').keyup(function(event){
+					if (event.keyCode == 13) {
+						if (!event.shiftKey) {
+							sendChatMessage();
+							$('#message_input')[0].value = "";
+						}
 					}
-				}
-			})
+				})
 			};
 
 		</script>

@@ -31,7 +31,8 @@ def index(request):
 			'username':message.username,
 			'date':message.datetime.strftime("%Y-%m-%d %H:%M:%S"),
 			'content':message.content,
-			'rating':''
+			'rating':'',
+			'id':message.pk
 		})
 
 	context = RequestContext(request, {
@@ -77,13 +78,13 @@ def getDeviceType(request):
 	return 'user'
 
 def getLatestPost(request):
-	timestamp = request.GET.get("timestamp", None)
-	if not timestamp:
+	message_id = int(request.GET.get("message_id", 0))
+	if not message_id:
 		earlier = datetime.now() - timedelta(weeks=12)
+		query = MessageModel.objects.filter(datetime__range=(earlier, datetime.now()))
 	else:
-		earlier = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S") + timedelta(seconds=1)
+		query = MessageModel.objects.filter(pk=message_id+1)
 
-	query = MessageModel.objects.filter(datetime__range=(earlier, datetime.now()))
 
 	template = loader.get_template("event.html")
 	for message in query:
@@ -94,7 +95,8 @@ def getLatestPost(request):
 				'username':message.username,
 				'date':message.datetime.strftime("%Y-%m-%d %H:%M:%S"),
 				'content':message.content,
-				'rating':''
+				'rating':'',
+				'id':message.pk
 			}
 		})
 		return HttpResponse(template.render(context))
