@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# BRF (Basefarm Request Funneler)
+# Structchat
 # Component: Utilities
 # Module: Various text escaping utils
 

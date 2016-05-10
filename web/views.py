@@ -50,10 +50,14 @@ def post(request):
 	if not content:
 		return HttpResponse("Go fuck a goat")
 
+	markdowns = markdown(content, extras=["fenced-code-blocks"])
+	markdowns.replace("&amp;lt", "&lt")
+	markdowns.replace("&amp;gt", "&gt")
+
 	message = MessageModel(
 		device_type=getDeviceType(request),
 		username=request.session['username'],
-		content=markdown(content, extras=["fenced-code-blocks"]),
+		content=markdowns,
 		datetime=datetime.now(),
 		rating=""
 	)
