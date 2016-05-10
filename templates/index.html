@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1"> <!-- This to support mobile and tablets -->
 		<title>StructChat</title>
 		{% include "includes.html" %}
 		<link rel="stylesheet" type="text/css" href="/static/css/index.css">
@@ -65,10 +66,7 @@
 			function sendChatMessage() {
 				console.log($('#message_input')[0].value)
 				$.get("/post?message_input="+encodeURIComponent($('#message_input')[0].value), function(data){})
-					.done(function(){
-						// window.last_timestamp = $('#date').first().text();
-						// alert("Post: "+last_timestamp);
-					}
+					.done(function(){}
 				);
 				$('#message_input')[0].value=""
 				return false
@@ -82,10 +80,7 @@
 						if (window.last_timestamp) {
 							$.get("/api/getlatestpost?timestamp="+encodeURIComponent(last_timestamp), function(data){
 								$( "#message_feed" ).append( data );
-								// alert(data);
 								if (data.length>10) {
-									// alert("Load: "+last_timestamp);
-									// window.last_timestamp = $('#date').first().text();
 									if (document[hidden]) {
 										new Notification(data);
 									};
@@ -102,7 +97,29 @@
 						}
 					},
 					1000);
+
+				// Temporary fix on iPhone
+				$('body').animate({
+					scrollTop:$('body').prop("scrollHeight")
+				}, 300);
+
+			$('#message_input').keypress(function(event){
+				// alert('KeyCode: '+event.keyCode)
+				if (event.keyCode == 13) {
+					// $('#message_input')[0].value = "";
+
+					// alert('enterKey');
+					if (event.shiftKey) {
+						// alert('shift enter!');
+						// $('#message_input')[0].value += "\n";
+					} else {
+						sendChatMessage();
+						$('#message_input')[0].value = "";
+					}
+				}
+			})
 			};
+
 		</script>
 
 	</head>
@@ -110,9 +127,8 @@
 		{% include "sidebar.html" %}
 		<div class="pusher landing-image">
 			{% include "header.html" %}
-			<!-- <br> -->
-			<div class="ui {% comment "optional note" %}loading{% endcomment %} segment scroll area" style="-webkit-overflow-scrolling: touch;">
-				<div class="ui feed" id="message_feed" name="message_feed">
+			<div class="ui {% comment "optional note" %}loading{% endcomment %} segment scroll area">
+				<div class="ui feed" id="message_feed" name="message_feed" style="max-height:85%;">
 					{% for post in posts %}
 						{% include "event.html" %}
 					{% endfor %}
@@ -120,12 +136,13 @@
 			</div>
 			<br>
 			<div class="ui bottom attached segment">
-				<form onsubmit="return sendChatMessage();">
+				<!-- <form onsubmit="return sendChatMessage();"> -->
+				<div class="ui form">
 					<div class="ui action input" style="width:100%;">
-						<input placeholder="type message here" autocomplete="off" name="message_input" id="message_input" type="textarea">
-						<button onclick="sendChatMessage();" class="ui orange button">Send</button>
+						<textarea placeholder="type message here" autocomplete="off" name="message_input" id="message_input" type="textarea"></textarea>
+						<button onclick="sendChatMessage();" class="ui orange button" style="height: 38">Send</button>
 					</div>
-				</form>
+				</div>
 			</div>
 		</div>
 	</body>

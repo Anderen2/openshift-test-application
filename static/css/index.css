@@ -7,3 +7,11 @@
 	max-height: 85%;
 	overflow: auto;
 }
+
+@media screen and (max-device-height: 480px) {
+	.scroll.area {
+		height: 85%;
+		max-height: 10%;
+		overflow: auto;
+	}
+}

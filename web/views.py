@@ -20,11 +20,15 @@ def index(request):
 			'devicetype':message.device_type,
 			'username':message.username,
 			'date':message.datetime.strftime("%Y-%m-%d %H:%M:%S"),
-			'content':markdown(message.content),
+			'content':message.content,
 			'rating':''
 		})
 
-	context = RequestContext(request, {'request':request, 'posts':messages, 'last_timestamp':messages[-1]['date']})
+	context = RequestContext(request, {
+		'request':request,
+		'posts':messages,
+		'last_timestamp':messages[-1]['date']
+	})
 	if "username" not in request.session.keys():
 		return HttpResponseRedirect("/login")
 
@@ -39,7 +43,7 @@ def post(request):
 	message = MessageModel(
 		device_type=getDeviceType(request),
 		username=request.session['username'],
-		content=content,
+		content=markdown(content),
 		datetime=datetime.now(),
 		rating=""
 	)
@@ -80,7 +84,7 @@ def getLatestPost(request):
 				'devicetype':message.device_type,
 				'username':message.username,
 				'date':message.datetime.strftime("%Y-%m-%d %H:%M:%S"),
-				'content':markdown(message.content),
+				'content':message.content,
 				'rating':''
 			}
 		})
