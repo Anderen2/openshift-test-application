@@ -11,5 +11,6 @@ urlpatterns = patterns('',
 	url(r'^login$', 'web.views.login'),
 	url(r'^logout$', 'web.views.logout'),
 	url(r'^signup$', 'web.views.signUp'),
-	url(r'^displaydatabase$', 'web.views.displayDatabase'),
+	url(r'^editdatabase$', 'web.views.editDatabase'),
+	url(r'^api/removerowfromdatabase', 'web.views.removeRowFromDatabase')
 )

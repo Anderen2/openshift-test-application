@@ -170,20 +170,29 @@ def signUp(request):
 	context = RequestContext(request, {'request':request})
 	return HttpResponse(template.render(context))
 
+def home(request):
+	template = loader.get_template('home.html')
+	context = RequestContext(request, {'request':request})
+	return HttpResponse(template.render(context))
+
+
 # Test view to see what's inside a db-table
-def displayDatabase(request):
+def editDatabase(request):
 	if 'username' not in request.session or request.session['username'].lower() not in ['sebastian', 'seb', 'ajs']:
 		context = RequestContext(request, {'errornumber':520, 'errormessage':'You do not have permission to enter this page.'})
 		return HttpResponse(loader.get_template('errorPage.html').render(context))
-		# return HttpResponse('You do not have permission to enter this page.\n')
 	template = loader.get_template('database.html')
 
 	models = []
 	for model in [UserModel, MessageModel, RoomModel]:
+		columns = sorted(model._meta.get_all_field_names())
+		# rows = [[m.__dict__[c] for c in sorted(m.__dict__.keys()) if not c[0]=="_"] for m in model.objects.all()]
+		rows = [dict(zip(columns, [m.__dict__[c] for c in sorted(m.__dict__.keys()) if not c[0]=="_"])) for m in model.objects.all()]
 		models.append({
 			'name':model._meta.db_table,
 			'columns':sorted(model._meta.get_all_field_names()),
-			'rows':[[m.__dict__[c] for c in sorted(m.__dict__.keys()) if not c[0]=="_"] for m in model.objects.all()]
+			'rows':[[m.__dict__[c] for c in sorted(m.__dict__.keys()) if not c[0]=="_"] for m in model.objects.all()],
+			'items':[dict(zip(columns, [m.__dict__[c] for c in sorted(m.__dict__.keys()) if not c[0]=="_"])) for m in model.objects.all()]
 		})
 
 	context = RequestContext(request, {
@@ -192,7 +201,17 @@ def displayDatabase(request):
 	})
 	return HttpResponse(template.render(context))
 
-def home(request):
-	template = loader.get_template('home.html')
-	context = RequestContext(request, {'request':request})
-	return HttpResponse(template.render(context))
+def removeRowFromDatabase(request):
+	if 'username' not in request.session or request.session['username'].lower() not in ['sebastian', 'seb', 'ajs']:
+		context = RequestContext(request, {'errornumber':520, 'errormessage':'You do not have permission to perform this page action.'})
+		return HttpResponse(loader.get_template('errorPage.html').render(context))
+	if request.method == 'POST':
+		row_nr = int(request.POST.get('row_nr', 0))
+		model_nr = int(request.POST.get('model_nr', 0))
+		print model_nr, row_nr, type(model_nr)
+		model = {1:UserModel, 2:MessageModel, 3:RoomModel}[model_nr]
+		query = model.objects.filter(pk=row_nr)
+		if query.count() == 1:
+			query.delete()
+			return HttpResponse('success: remove')
+		return HttpResponse('nothing')
