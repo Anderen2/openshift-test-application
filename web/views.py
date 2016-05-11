@@ -214,4 +214,4 @@ def removeRowFromDatabase(request):
 		if query.count() == 1:
 			query.delete()
 			return HttpResponse('success: remove')
-		return HttpResponse('nothing')
+		return HttpResponse('error: remove')
