@@ -4,19 +4,8 @@ from django.db import models
 
 
 class MessageModel(models.Model):
-    # user_id = models.ForeignKey(
-    #     'UserModel',
-    #     on_delete=models.SET_NULL,
-    #     blank=True,
-    #     null=True
-    # )
     username = models.CharField(max_length=32)
-    room_id = models.ForeignKey(
-        'RoomModel',
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True
-    )
+    room_id = models.IntegerField()
     datetime = models.DateTimeField()
     content = models.TextField()
     rating = models.TextField()
