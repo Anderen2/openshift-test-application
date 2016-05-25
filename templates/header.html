@@ -2,7 +2,7 @@
 	<a class="item" onclick="toggleSidebar();"><i class="sidebar icon"></i></a>
 	<a class="active header orange item" href="/"><b>StructChat</b></a>
 	{% if request.get_full_path = "/" %}
-		<a class="item"><i class="clock icon"></i>Sebastian - just chatted</a> <!-- This is going to be updated each time people send a chat -->
+		<a class="item" style="display: none;" id="statusbar"><i class="clock icon"></i></a> <!-- This is going to be updated each time people send a chat -->
 	{% endif %}
 	<div class="right menu">
 		<div class="image header item" data-content="StructChat is still in Beta, so please be patient."><i class="warning circle icon"></i>Beta</div>

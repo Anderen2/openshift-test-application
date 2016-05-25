@@ -38,7 +38,6 @@ def index(request):
 	context = RequestContext(request, {
 		'request':request,
 		'posts':messages,
-		# 'last_timestamp':messages[-1]['date']
 	})
 	if "username" not in request.session.keys():
 		return HttpResponseRedirect("/login")
@@ -59,7 +58,8 @@ def post(request):
 		username=request.session['username'],
 		content=markdowns,
 		datetime=datetime.now(),
-		rating=""
+		rating="",
+		room_id=0,
 	)
 	message.save()
 	return HttpResponse(content)
@@ -178,7 +178,7 @@ def home(request):
 
 # Test view to see what's inside a db-table
 def editDatabase(request):
-	if 'username' not in request.session or request.session['username'].lower() not in ['sebastian', 'seb', 'ajs']:
+	if 'username' not in request.session or request.session['username'].lower() not in ['sebastian', 'seb', 'asj']:
 		context = RequestContext(request, {'errornumber':520, 'errormessage':'You do not have permission to enter this page.'})
 		return HttpResponse(loader.get_template('errorPage.html').render(context))
 	template = loader.get_template('database.html')
@@ -201,17 +201,26 @@ def editDatabase(request):
 	})
 	return HttpResponse(template.render(context))
 
-def removeRowFromDatabase(request):
-	if 'username' not in request.session or request.session['username'].lower() not in ['sebastian', 'seb', 'ajs']:
+def removeRowFromModel(request):
+	if 'username' not in request.session or request.session['username'].lower() not in ['sebastian', 'seb', 'asj']:
 		context = RequestContext(request, {'errornumber':520, 'errormessage':'You do not have permission to perform this page action.'})
 		return HttpResponse(loader.get_template('errorPage.html').render(context))
 	if request.method == 'POST':
 		row_nr = int(request.POST.get('row_nr', 0))
 		model_nr = int(request.POST.get('model_nr', 0))
-		print model_nr, row_nr, type(model_nr)
 		model = {1:UserModel, 2:MessageModel, 3:RoomModel}[model_nr]
 		query = model.objects.filter(pk=row_nr)
 		if query.count() == 1:
 			query.delete()
-			return HttpResponse('success: remove')
-		return HttpResponse('error: remove')
+			return HttpResponse('success')
+		return HttpResponse('error')
+
+def editRowInModel(request):
+	if 'username' not in request.session or request.session['username'].lower() not in ['sebastian', 'seb', 'asj']:
+		context = RequestContext(request, {'errornumber':520, 'errormessage':'You do not have permission to perform this page action.'})
+		return HttpResponse(loader.get_template('errorPage.html').render(context))
+	if request.method == 'POST':
+		row_nr = int(request.POST.get('row_nr', 0))
+		model_nr = int(request.POST.get('model_nr', 0))
+		model = {1:UserModel, 2:MessageModel, 3:RoomModel}[model_nr]
+		

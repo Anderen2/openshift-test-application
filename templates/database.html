@@ -34,12 +34,12 @@
 			function removeRow(row_nr, model_nr) {
 				var data = {model_nr:model_nr, row_nr:row_nr, csrfmiddlewaretoken: '{{ csrf_token }}'};
 				if (confirm("Are you sure you want to delete this row?")) {
-					$.post("/api/removerowfromdatabase", data)
+					$.post("/api/removerowfrommodel", data)
 						.done(function(content, status) {
 							if (status == 'success') {
-								if (content == 'success: remove') {
+								if (content == 'success') {
 									$('#model'+(model_nr).toString()+'-row'+row_nr).remove();
-								} else if (content == 'error: remove') {
+								} else if (content == 'error') {
 									alert("Couldn't remove");
 								}
 							}
@@ -47,8 +47,8 @@
 				}
 			}
 
-			var editCell = function(cell) {
-				// 
+			function editRow(row_nr, model_nr) {
+				
 			}
 
 			$(document).ready(function() {
@@ -57,13 +57,6 @@
 					on: 'click',
 					position: 'bottom center'
 				});
-				/*$('.user-popup')
-					.popup({
-				    	popup    : $('.ui.popup'),
-				    	hoverable: true,
-				    	on		 : 'click',
-				    	position : 'bottom left'
-				});*/
 			});
 		</script>
 		{% include "sidebar.html" %}
@@ -74,28 +67,32 @@
 				<div class="compact ui warning message">
 					You can now delete rows. Edit still doesn't work.
 				</div>
-				{% for m in models %}
+				{% for model in models %}
 				<div class="ui segment" style="margin: 0 auto; margin-bottom: 10px;">
-					<h2>{{ m.name }}</h2>
+					<h2>{{ model.name }}</h2>
 					<table class="ui celled table">
 						<thead>
 							<tr>
-								{% for c in m.items.0.keys %}
-									<th>{{ c }}</th>
+								{% for column in model.items.0.keys %}
+									<th>{{ column }}</th>
 								{% endfor %}
 								<th>Edit</th>
 							</tr>
 						</thead>
 						<tbody>
-						{% for r in m.items %}
+						{% for row in model.items %}
 							<tr id="model{{ forloop.parentloop.counter }}-row{{ r.id }}">
-								{% for v in r.values %}
-									<td id="cell" contenteditable="false">{{ v }}</td>
+								{% for item in row.items %}
+									{% if item.0 == 'password' or item.0 == 'id' or item.0 == 'datetime' or item.0 == 'rating' %}
+										<td id="cell" contenteditable="false">{{ item.1 }}</td>
+									{% else %}
+										<td id="cell" spellcheck="false" contenteditable="true">{{ item.1 }}</td>
+									{% endif %}
 								{% endfor %}
 								<td class="selectable center aligned warning user-popup" data-html=
 									"<div class='ui link list'>
-										<a class='item'>Edit values</a>
-										<a class='item' onclick='removeRow({{r.id}}, {{forloop.parentloop.counter}})'>Remove</a>
+										<a class='item' onclick='editRow({{row.id}}, {{forlopp.parentloop.counter}})'>Save edits</a>
+										<a class='item' onclick='removeRow({{row.id}}, {{forloop.parentloop.counter}})'>Remove</a>
 									</div>">
 									Edit
 								</td>
