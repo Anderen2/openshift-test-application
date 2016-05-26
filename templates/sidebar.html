@@ -5,5 +5,8 @@
 	<a class="item" href="/signup">Sign Up</a>
 	{% if request.session.username %}
 		<a class="item" onclick="alert('This feature is yet to be implemented.');"><i class="plus icon"></i>Create Room</a>
+		{% if request.session.username == 'seb' or request.username.session == 'asj' %}
+			<a class="item" href="/editdatabase"><i class="edit icon"></i>Edit database</a>
+		{% endif %}
 	{% endif %}
 </div>
