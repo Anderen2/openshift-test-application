@@ -38,7 +38,7 @@
 						.done(function(content, status) {
 							if (status == 'success') {
 								if (content == 'success') {
-									$('#model'+(model_nr).toString()+'-row'+row_nr).remove();
+									$('#model-'+(model_nr).toString()+'-row-'+row_nr).remove();
 								} else if (content == 'error') {
 									alert("Couldn't remove");
 								}
@@ -48,7 +48,28 @@
 			}
 
 			function editRow(row_nr, model_nr) {
-				
+				var data = {};
+				$.each($('#model-'+model_nr+'-row-'+row_nr)[0].cells, function (index, value) {
+					if (value.id != '') {
+						data[value.id] = value.textContent;
+					}
+				})
+				console.log(data);
+				// alert($('#model-'+model_nr+'-row-'+row_nr)[0].cells[0].textContent);
+				if (confirm("Are you sure you want to upload changes to model nr. " + model_nr + " row nr. " + row_nr + "?")) {
+					$.ajax({
+						type: "POST",
+						dataType: 'json',
+						url: "/api/editrowinmodel",
+						data: {csrfmiddlewaretoken:'{{ csrf_token }}', model_nr:model_nr, data:JSON.stringify(data)}
+					})
+					// $.post("/api/editrowinmodel", data)
+					// 	.done(function(content, status) {
+					// 		if (status != 'success') {
+					// 			alert("Couldn't save changes.")
+					// 		}
+					// 	});
+				}
 			}
 
 			$(document).ready(function() {
@@ -65,7 +86,7 @@
 			<h1 class="ui orange image header">Database</h1>
 			<div class="ui segment scroll area" style="margin: 0 auto; webkit-overflow-scrolling: touch;">
 				<div class="compact ui warning message">
-					You can now delete rows. Edit still doesn't work.
+					Seems to be working. Use at own risk though.
 				</div>
 				{% for model in models %}
 				<div class="ui segment" style="margin: 0 auto; margin-bottom: 10px;">
@@ -81,17 +102,17 @@
 						</thead>
 						<tbody>
 						{% for row in model.items %}
-							<tr id="model{{ forloop.parentloop.counter }}-row{{ r.id }}">
+							<tr id="model-{{ forloop.parentloop.counter }}-row-{{ row.id }}">
 								{% for item in row.items %}
 									{% if item.0 == 'password' or item.0 == 'id' or item.0 == 'datetime' or item.0 == 'rating' %}
-										<td id="cell" contenteditable="false">{{ item.1 }}</td>
+										<td id="{{ item.0 }}" contenteditable="false">{{ item.1 }}</td>
 									{% else %}
-										<td id="cell" spellcheck="false" contenteditable="true">{{ item.1 }}</td>
+										<td id="{{ item.0 }}" spellcheck="false" contenteditable="true">{{ item.1 }}</td>
 									{% endif %}
 								{% endfor %}
 								<td class="selectable center aligned warning user-popup" data-html=
 									"<div class='ui link list'>
-										<a class='item' onclick='editRow({{row.id}}, {{forlopp.parentloop.counter}})'>Save edits</a>
+										<a class='item' onclick='editRow({{row.id}}, {{forloop.parentloop.counter}})'>Save edits</a>
 										<a class='item' onclick='removeRow({{row.id}}, {{forloop.parentloop.counter}})'>Remove</a>
 									</div>">
 									Edit

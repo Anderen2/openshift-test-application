@@ -5,6 +5,7 @@
 # Module: Views
 
 #Std. lib
+import json
 from datetime import datetime, timedelta
 
 #Django modules
@@ -185,15 +186,22 @@ def editDatabase(request):
 
 	models = []
 	for model in [UserModel, MessageModel, RoomModel]:
-		columns = sorted(model._meta.get_all_field_names())
-		# rows = [[m.__dict__[c] for c in sorted(m.__dict__.keys()) if not c[0]=="_"] for m in model.objects.all()]
-		rows = [dict(zip(columns, [m.__dict__[c] for c in sorted(m.__dict__.keys()) if not c[0]=="_"])) for m in model.objects.all()]
+		data = model.objects.values()
+		if model == MessageModel:
+			for i, row in enumerate(data):
+				data[i]['datetime'] = str(data[i]['datetime'])
+			
 		models.append({
 			'name':model._meta.db_table,
-			'columns':sorted(model._meta.get_all_field_names()),
-			'rows':[[m.__dict__[c] for c in sorted(m.__dict__.keys()) if not c[0]=="_"] for m in model.objects.all()],
-			'items':[dict(zip(columns, [m.__dict__[c] for c in sorted(m.__dict__.keys()) if not c[0]=="_"])) for m in model.objects.all()]
+			'items':data
 		})
+
+		# columns = model._meta.get_all_field_names()
+		# data = model.objects.all()
+		# models.append({
+		# 	'name':model._meta.db_table,
+		# 	'items':[dict(zip(columns, [m.__dict__[c] for c in sorted(m.__dict__.keys()) if not c[0]=="_"])) for m in model.objects.all()]
+		# })
 
 	context = RequestContext(request, {
 		'models':models,
@@ -220,7 +228,23 @@ def editRowInModel(request):
 		context = RequestContext(request, {'errornumber':520, 'errormessage':'You do not have permission to perform this page action.'})
 		return HttpResponse(loader.get_template('errorPage.html').render(context))
 	if request.method == 'POST':
-		row_nr = int(request.POST.get('row_nr', 0))
-		model_nr = int(request.POST.get('model_nr', 0))
+		model_nr = request.POST.get('model_nr', None)
+		data = request.POST.get('data', None)
+		if not data:
+			return HttpResponse("data_error")
+		if not model_nr:
+			return HttpResponse("model_error")
+		data = json.loads(data)
+		# Evaluate data
+		for key, value in data.items():
+			if 'id' in key:
+				data[key] = int(value)
+			else:
+				data[key] = str(value)
+		model_nr = int(model_nr[0])
 		model = {1:UserModel, 2:MessageModel, 3:RoomModel}[model_nr]
-		
+		try:
+			model.objects.filter(id=data['id']).update(**data)
+		except Exception as e:
+			print e
+		return HttpResponse("success")
