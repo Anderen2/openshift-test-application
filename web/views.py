@@ -31,7 +31,8 @@ def index(request):
 			'devicetype':message.device_type,
 			'username':message.username,
 			'date':message.datetime.strftime("%Y-%m-%d %H:%M:%S"),
-			'content':message.content,
+			# 'content':message.content,
+			'content':markdown(message.content,extras=["fenced-code-blocks"]).replace("&amp;lt", "&lt").replace("&amp;gt", "&gt"),
 			'rating':'',
 			'id':message.pk
 		})
@@ -50,9 +51,10 @@ def post(request):
 	if not content:
 		return HttpResponse("Go fuck a goat")
 
-	markdowns = markdown(content, extras=["fenced-code-blocks"])
-	markdowns = markdowns.replace("&amp;lt", "&lt")
-	markdowns = markdowns.replace("&amp;gt", "&gt")
+	# markdowns = markdown(content, extras=["fenced-code-blocks"])
+	# markdowns = markdowns.replace("&amp;lt", "&lt")
+	# markdowns = markdowns.replace("&amp;gt", "&gt")
+	markdowns = content
 
 	message = MessageModel(
 		device_type=getDeviceType(request),
@@ -99,7 +101,8 @@ def getLatestPost(request):
 				'devicetype':message.device_type,
 				'username':message.username,
 				'date':message.datetime.strftime("%Y-%m-%d %H:%M:%S"),
-				'content':message.content,
+				# 'content':message.content,
+				'content':markdown(message.content,extras=["fenced-code-blocks"]).replace("&amp;lt", "&lt").replace("&amp;gt", "&gt"),
 				'rating':'',
 				'id':message.pk
 			}
@@ -236,11 +239,14 @@ def editRowInModel(request):
 			return HttpResponse("model_error")
 		data = json.loads(data)
 		# Evaluate data
-		for key, value in data.items():
-			if 'id' in key:
-				data[key] = int(value)
-			else:
-				data[key] = str(value)
+		try:
+			for key, value in data.items():
+				if 'id' in key:
+					data[key] = int(value)
+				# else:
+					# data[key] = str(value)
+		except Exception as e:
+			print e
 		model_nr = int(model_nr[0])
 		model = {1:UserModel, 2:MessageModel, 3:RoomModel}[model_nr]
 		try:

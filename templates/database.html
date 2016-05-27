@@ -27,6 +27,11 @@
 			.compact.ui.warning.message {
 
 			}
+
+			td:not(#edit-button) {
+				white-space: pre-line;
+			}
+
 		</style>
 	</head>
 	<body>
@@ -51,7 +56,8 @@
 				var data = {};
 				$.each($('#model-'+model_nr+'-row-'+row_nr)[0].cells, function (index, value) {
 					if (value.id != '') {
-						data[value.id] = value.textContent;
+						data[value.id] = value.innerHTML.replace(/<br>/g, '\n');
+
 					}
 				})
 				console.log(data);
@@ -61,7 +67,10 @@
 						type: "POST",
 						dataType: 'json',
 						url: "/api/editrowinmodel",
-						data: {csrfmiddlewaretoken:'{{ csrf_token }}', model_nr:model_nr, data:JSON.stringify(data)}
+						data: {csrfmiddlewaretoken:'{{ csrf_token }}', model_nr:model_nr, data:JSON.stringify(data)},
+						success: function(data) {
+							console.log(data);
+						}
 					})
 					// $.post("/api/editrowinmodel", data)
 					// 	.done(function(content, status) {
