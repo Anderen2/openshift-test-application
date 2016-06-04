@@ -77,6 +77,12 @@
 			}
 
 			window.onload = function() {
+
+				// Twemoji
+				{% ifequal device "linux" %}
+				twemoji.parse(document.body);
+				{% endifequal %}
+
 				scrollArea();
 
 				setInterval(function()
@@ -89,6 +95,10 @@
 										new Notification(data);
 									};
 									scrollArea();
+
+									{% ifequal device 'linux' %}
+									twemoji.parse(document.body);
+									{% endifequal %}
 								};
 							});
 

@@ -6,6 +6,7 @@
 	{% endif %}
 	<div class="right menu">
 		<div class="image header item" data-content="StructChat is still in Beta, so please be patient."><i class="warning circle icon"></i>Beta</div>
+		{% include "notificationsDropdown.html" %}
 		{% if request.session.username %}
 			<a class="item" href="/logout">Log Out</a>
 		{% endif %}

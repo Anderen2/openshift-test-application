@@ -1,14 +1,16 @@
 <div class="event">
 	<div class="label">
-		<!-- <img src=""> -->
-		<i class="{{post.devicetype}} icon"></i>
+		{% comment "optional note" %}
+		    <!-- <img src="http://cdn.images.express.co.uk/img/dynamic/151/590x/Jesus-Main-626779.jpg"> -->
+		{% endcomment %}
+		<i class="{{post.devicetype}} icon">{{post.id}}</i>
 	</div>
 	<div class="content">
 		<div class="summary">
 			<a class="user">{{post.username}}</a> chatted
 			<div class="date" id="date">{{post.date}}</div>
 		</div>
-		<div class="exra text" style="max-width: 500px;">
+		<div class="extra text" style="max-width: 500px;">
 			{{ post.content | safe }}
 		</div>
 		<div class="meta">

@@ -40,6 +40,7 @@ def index(request):
 	context = RequestContext(request, {
 		'request':request,
 		'posts':messages,
+		'device':getDeviceType(request)
 	})
 	if "username" not in request.session.keys():
 		return HttpResponseRedirect("/login")
