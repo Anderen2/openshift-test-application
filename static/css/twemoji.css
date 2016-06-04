@@ -1,0 +1,7 @@
+img.emoji {  
+	/* // Override any img styles to ensure Emojis are displayed inline */
+	margin: 0px !important;
+	display: inline !important;
+	width: 20px;
+	max-height: auto;
+}
