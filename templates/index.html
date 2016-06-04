@@ -102,6 +102,9 @@
 									{% ifequal device 'linux' %}
 									twemoji.parse(document.body);
 									{% endifequal %}
+									{% ifequal request.session.username 'seb' %}
+									twemoji.parse(document.body);
+									{% endifequal %}
 								};
 							});
 
