@@ -15,6 +15,7 @@ from django.template import RequestContext, loader
 from django.db import connection
 
 #Third-party
+import newrelic.agent
 from passlib.hash import sha256_crypt
 from markdown2 import markdown
 
