@@ -22,6 +22,8 @@ from markdown2 import markdown
 from web.models import UserModel, RoomModel, MessageModel
 from utils import escaping
 
+amountPosts, amountSignups, amountLogins = 0,0,0
+
 def index(request):
 	template = loader.get_template("index.html")
 
@@ -48,6 +50,10 @@ def index(request):
 	return HttpResponse(template.render(context))
 
 def post(request):
+	global amountPosts
+	amountPosts = amountPosts + 1
+	newrelic.agent.record_custom_metric('Chat/Chitchat', amountPosts)
+
 	content = escaping.escape_tags(request.GET.get("message_input", None))
 	if not content:
 		return HttpResponse("Go fuck a goat")
@@ -113,6 +119,10 @@ def getLatestPost(request):
 	return HttpResponse("")
 
 def login(request):
+	global amountLogins
+	amountLogins = amountLogins + 1
+	newrelic.agent.record_custom_metric('Chat/Login', amountLogins)
+
 	if "username" in request.session:
 		return HttpResponseRedirect("/")
 
@@ -145,6 +155,10 @@ def logout(request):
 
 
 def signUp(request):
+	global amountSignups
+	amountSignups = amountSignups + 1
+	newrelic.agent.record_custom_metric('Chat/Signup', amountSignups)
+
 	template = loader.get_template("signUp.html")
 	if request.method == "POST":
 		email = request.POST.get("email", "")
@@ -170,6 +184,7 @@ def signUp(request):
 				email=email
 			)
 			user.save()
+
 			return HttpResponse('success')
 
 	context = RequestContext(request, {'request':request})
