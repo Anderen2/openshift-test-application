@@ -10,5 +10,9 @@ https://docs.djangoproject.com/en/1.6/howto/deployment/wsgi/
 import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "structchat.settings")
 
+import newrelic.agent
+newrelic.agent.initialize()
+print("Newrelic init #2")
+
 from django.core.wsgi import get_wsgi_application
-application = get_wsgi_application()
+application = newrelic.agent.WSGIApplicationWrapper(get_wsgi_application())
