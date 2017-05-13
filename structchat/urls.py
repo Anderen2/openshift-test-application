@@ -1,6 +1,6 @@
-import newrelic.agent
-newrelic.agent.initialize()
-print("Newrelic init #2")
+# import newrelic.agent
+# newrelic.agent.initialize()
+# print("Newrelic init #2")
 
 from django.conf.urls import patterns, include, url
 
