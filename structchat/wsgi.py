@@ -15,4 +15,6 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "structchat.settings")
 #print("Newrelic init #2")
 
 from django.core.wsgi import get_wsgi_application
-application = newrelic.agent.WSGIApplicationWrapper(get_wsgi_application())
+#application = newrelic.agent.WSGIApplicationWrapper(get_wsgi_application())
+
+application = get_wsgi_application()
